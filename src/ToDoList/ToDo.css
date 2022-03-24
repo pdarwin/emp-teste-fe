@@ -1,0 +1,57 @@
+.App {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.todo-card {
+  box-sizing: border-box;
+  padding: 0.5em;
+  width: 25em;
+  height: 4em;
+  border-radius: 2px;
+  border: 1px solid #282c34;
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1em;
+}
+
+.todo-text {
+  color: #282c34;
+  flex: 9;
+}
+
+.todo-remove {
+  color: red;
+  background-color: white;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  cursor: pointer;
+}
+
+.list-container {
+  box-sizing: content-box;
+  padding-top: 1em;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 25em;
+  width: 30em;
+  overflow-y: scroll;
+}
+
+.App-header {
+  width: 100%;
+  background-color: #282c34;
+  min-height: 6em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}

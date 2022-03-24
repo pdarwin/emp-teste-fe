@@ -1,0 +1,40 @@
+.grid-container-inside {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 10px;
+}
+
+.grid-item {
+  background-color: rgba(212, 14, 14, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+}
+
+/* Style the header */
+.header {
+  grid-area: header;
+  background-color: #f1f1f1;
+  padding: 30px;
+  text-align: center;
+  font-size: 35px;
+}
+
+/* The grid container */
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    "header header header header header header"
+    "left middle middle middle middle right"
+    "footer footer footer footer footer footer";
+  /* grid-column-gap: 10px; - if you want gap between the columns */
+}
+
+/* Style the footer */
+.footer {
+  grid-area: footer;
+  background-color: #f1f1f1;
+  padding: 10px;
+  text-align: center;
+}
