@@ -1,40 +1,60 @@
-.grid-container-inside {
-  display: grid;
-  grid-template-columns: auto auto auto;
-  padding: 10px;
+body {
+  color: coral;
+  background-color: rgb(25, 1, 56);
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.grid-item {
-  background-color: rgba(212, 14, 14, 0.8);
-  border: 1px solid rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  font-size: 30px;
+/* CSS */
+.button-3 {
+  appearance: none;
+  background-color: #ee7525;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  border-radius: 6px;
+  box-shadow: rgba(27, 31, 35, 0.1) 0 1px 0;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-block;
+  font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: 6px 16px;
+  position: relative;
   text-align: center;
+  text-decoration: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  vertical-align: middle;
+  white-space: nowrap;
+  margin: 5px;
 }
 
-/* Style the header */
-.header {
-  grid-area: header;
-  background-color: #f1f1f1;
-  padding: 30px;
-  text-align: center;
-  font-size: 35px;
+.button-3:focus:not(:focus-visible):not(.focus-visible) {
+  box-shadow: none;
+  outline: none;
 }
 
-/* The grid container */
-.grid-container {
-  display: grid;
-  grid-template-areas:
-    "header header header header header header"
-    "left middle middle middle middle right"
-    "footer footer footer footer footer footer";
-  /* grid-column-gap: 10px; - if you want gap between the columns */
+.button-3:hover {
+  background-color: #fff;
+  color: #ee7525;
 }
 
-/* Style the footer */
-.footer {
-  grid-area: footer;
-  background-color: #f1f1f1;
-  padding: 10px;
-  text-align: center;
+.button-3:focus {
+  box-shadow: rgba(164, 46, 46, 0.4) 0 0 0 3px;
+  outline: none;
+}
+
+.button-3:disabled {
+  background-color: #94d3a2;
+  border-color: rgba(27, 31, 35, 0.1);
+  color: rgba(255, 255, 255, 0.8);
+  cursor: default;
+}
+
+.button-3:active {
+  background-color: #c72d12;
+  box-shadow: rgba(20, 70, 32, 0.2) 0 1px 0 inset;
 }

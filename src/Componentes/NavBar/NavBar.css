@@ -1,0 +1,12 @@
+div div {
+  display: inline-block;
+}
+
+.Buttons {
+  margin-left: auto;
+}
+
+.Username {
+  margin-right: 0;
+  margin-left: auto;
+}

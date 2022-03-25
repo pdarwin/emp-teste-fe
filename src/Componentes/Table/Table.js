@@ -6,13 +6,16 @@ const API_URL = "http://localhost:8080";
 
 export function Table(props) {
   const [clientes, setClientes] = useState([]);
+  const [selecionado, setSelecionado] = useState([]);
 
   useEffect(() => {
     getClientes();
   }, []);
 
   function getClientes() {
-    fetch(API_URL + "/getClientes")
+    fetch(API_URL + "/getClientes", {
+      headers: { "Content-type": "application/json" },
+    })
       .then((response) => {
         console.log(response);
         // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
@@ -36,24 +39,37 @@ export function Table(props) {
 
   return (
     <div>
-      {clientes.map(function (element, index) {
-        return (
-          <table class="styled-table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Points</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Detalhe</th>
+          </tr>
+        </thead>
+        <tbody>
+          {clientes.map((element, index) => {
+            return (
+              <tr key={index}>
                 <td>{element.nome}</td>
-                <td>6000</td>
+                <td>{element.email}</td>
+                <td>
+                  <button
+                    class="button-3"
+                    role="button"
+                    onClick={() => {
+                      setSelecionado(index);
+                      console.log(index);
+                    }}
+                  >
+                    Detalhe
+                  </button>
+                </td>
               </tr>
-            </tbody>
-          </table>
-        );
-      })}
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
