@@ -77,14 +77,6 @@ function NavBar(props) {
                 src="https://png.pngtree.com/template/20190316/ourmid/pngtree-books-logo-image_80041.jpg" //
               />
             </Typography>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
-            >
-              LOGO
-            </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
                 <Button
@@ -99,7 +91,7 @@ function NavBar(props) {
               ))}
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Open settings">
+              <Tooltip title="Carrinho de compras">
                 <IconButton /* onClick={handleOpenUserMenu} */ sx={{ p: 0 }}>
                   <Avatar
                     alt="Carrinho de compras"
@@ -108,28 +100,12 @@ function NavBar(props) {
                 </IconButton>
               </Tooltip>
             </Box>
-            <Box sx={{ flexGrow: 0 }}>
-              {props.value}
-              <Menu
-                sx={{ mt: "45px" }}
-                id="menu-appbar"
-                //anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-              >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} /* onClick={handleCloseUserMenu */>
-                    <Typography textAlign="center">{setting}</Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
+            <Box sx={{ flexGrow: 0, mx: 2 }}>
+              <Tooltip title="Registar / Entrar">
+                <IconButton /* onClick={handleOpenUserMenu} */ sx={{ p: 0 }}>
+                  Registar / Entrar
+                </IconButton>
+              </Tooltip>
             </Box>
           </Toolbar>
         </Container>

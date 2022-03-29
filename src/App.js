@@ -40,7 +40,10 @@ function App() {
         <NavBar theme={myTheme} />
         <Routes>
           <Route path="/" exact component={<HomePage />}></Route>
-          <Route path="/editoras" element={<Editoras />}></Route>
+          <Route
+            path="/editoras"
+            element={<Editoras theme={myTheme} />}
+          ></Route>
         </Routes>
       </BrowserRouter>
       {/*      <Header />
