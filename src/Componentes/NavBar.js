@@ -1,15 +1,13 @@
-//import "./NavBar.css";
-//import "../../App.css";
 import { useNavigate } from "react-router-dom";
 
 import * as React from "react";
+import { useState } from "react";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
-import Menu from "@mui/material/Menu";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -17,12 +15,8 @@ import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
 import { ThemeProvider } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
-
-const pages = [
-  { nome: "Entrada", link: "/" },
-  { nome: "Editoras", link: "/editoras" },
-];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
+import Menu from "@mui/material/Menu";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,31 +30,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const pages = [
+  { name: "Loja", link: "/" },
+  { name: "Contactos", link: "/contactos" },
+];
+
+const menuadmin = [
+  { name: "Livros", link: "/livros" },
+  { name: "Autores", link: "/autores" },
+  { name: "Editoras", link: "/editoras" },
+];
+
 function NavBar(props) {
   const navigate = useNavigate();
 
-  /* const [anchorElNa  v, setAnchorElNav] =
-    (React.useState < null) | (HTMLElement > null);
-  const [anchorElUser, setAnchorElUser] =
-    (React.useState < null) | (HTMLElement > null); */
-  //function handleOpenNavMenu() {}
-  //const handleOpenUserMenu = () => {};
-
   const classes = useStyles();
 
-  /*   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  }; */
-  /*   const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
- 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  }; */
   return (
     <ThemeProvider theme={props.theme}>
       <AppBar position="static" color="primary" enableColorOnDark>
@@ -72,23 +57,51 @@ function NavBar(props) {
               component="div"
               sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
             >
-              <Avatar
-                alt="Livraria Requalificar"
-                src="https://png.pngtree.com/template/20190316/ourmid/pngtree-books-logo-image_80041.jpg" //
-              />
+              <IconButton
+                onClick={() => {
+                  navigate("/");
+                }}
+                sx={{ p: 0 }}
+              >
+                <Avatar
+                  alt="Livraria Requalificar"
+                  src="https://png.pngtree.com/template/20190316/ourmid/pngtree-books-logo-image_80041.jpg"
+                />
+              </IconButton>
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
                 <Button
-                  key={page.nome}
+                  key={page.name}
                   onClick={() => {
                     navigate(page.link);
                   }}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >
-                  {page.nome}
+                  {page.name}
                 </Button>
               ))}
+              <PopupState variant="popover" popupId="demo-popup-menu">
+                {(popupState) => (
+                  <React.Fragment>
+                    <Button variant="contained" {...bindTrigger(popupState)}>
+                      Administração
+                    </Button>
+                    <Menu {...bindMenu(popupState)}>
+                      {menuadmin.map((page) => (
+                        <MenuItem
+                          key={page.name}
+                          onClick={() => {
+                            navigate(page.link);
+                          }}
+                        >
+                          {page.name}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </React.Fragment>
+                )}
+              </PopupState>
             </Box>
             <Box sx={{ flexGrow: 0 }}>
               <Tooltip title="Carrinho de compras">
@@ -101,9 +114,14 @@ function NavBar(props) {
               </Tooltip>
             </Box>
             <Box sx={{ flexGrow: 0, mx: 2 }}>
-              <Tooltip title="Registar / Entrar">
-                <IconButton /* onClick={handleOpenUserMenu} */ sx={{ p: 0 }}>
-                  Registar / Entrar
+              <Tooltip title="Entrar">
+                <IconButton
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                  sx={{ p: 0 }}
+                >
+                  Entrar
                 </IconButton>
               </Tooltip>
             </Box>

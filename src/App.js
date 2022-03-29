@@ -1,18 +1,12 @@
 import "./App.css";
-// import { Contador } from "./Componentes/Contador/Contador";
-// import { Layout } from "./StatelessExercicio1/Layout";
-// import { ToDo } from "./Componentes/ToDoList/ToDo";
-import { Header } from "./Componentes/Header/Header";
-// import { Table } from "./Componentes/Table/Table";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { HomePage } from "./Componentes/HomePage";
-import { Editoras } from "./Componentes/Editoras/Editoras";
-// import { Contacts } from "./Componentes/Contacts";
-// import { Menu } from "./Componentes/Menu";
-import NavBar from "./Componentes/NavBar/NavBar";
+import { Loja } from "./Componentes/Loja/Loja";
+import Login from "./Componentes/Login";
+import { Editoras } from "./Componentes/Admin/Editoras";
+import { Autores } from "./Componentes/Admin/Autores";
+import NavBar from "./Componentes/NavBar";
 import { useState } from "react";
-import { UserBar } from "./Componentes/UserBar/UserBar";
-import { ThemeProvider, createTheme } from "@mui/material";
+import { createTheme } from "@mui/material";
 
 function App() {
   const [user, setUser] = useState();
@@ -26,9 +20,9 @@ function App() {
         contrastText: "#fff",
       },
       secondary: {
-        light: "#ff7961",
-        main: "#f44336",
-        dark: "#ba000d",
+        light: "#ce822c",
+        main: "#ce822c",
+        dark: "#ce822c",
         contrastText: "#000",
       },
     },
@@ -37,9 +31,13 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <NavBar theme={myTheme} />
+        <NavBar theme={myTheme} user={user} />
         <Routes>
-          <Route path="/" exact component={<HomePage />}></Route>
+          <Route path="/" element={<Loja theme={myTheme} />}></Route>
+          <Route path="/contactos"></Route>
+          <Route path="/login" element={<Login theme={myTheme} />}></Route>
+          <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
+          <Route path="/autores"></Route>
           <Route
             path="/editoras"
             element={<Editoras theme={myTheme} />}
