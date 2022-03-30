@@ -1,5 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import {
+  Alert,
   Box,
   Button,
   Container,
@@ -19,18 +20,38 @@ import { indigo, orange } from "@mui/material/colors";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function Registo({ theme, user, setUser }) {
+export function Registo({ theme, user, setUser, API_URL }) {
   const [tipo, setTipo] = useState();
   const [password, setPassword] = useState();
 
   const navigate = useNavigate();
 
-  const logIn = () => {
-    //if (user === "David" && password === "123456") {
-    navigate("/loja");
-    //props.doLogin({ name: "David" });
+  function registar() {
+    //if (novaPessoa.nome.trim().length !== 0 && novaPessoa.idade > 0) {
+    fetch(API_URL + "/regCliente", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({ nome: user.nome, email: user.email }),
+    })
+      .then((response) => {
+        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+        console.log(response);
+        if (response.status !== 200) {
+          throw new Error("There was an error finding pessoas");
+        }
+
+        return response.json();
+      })
+      .then((parsedResponse) => {
+        return <Alert severity="success">Registo efetuado com sucesso</Alert>;
+      })
+      .catch((error) => {
+        alert(error);
+      });
     //}
-  };
+  }
 
   return (
     <form className="form">
@@ -48,7 +69,7 @@ export function Registo({ theme, user, setUser }) {
             <FormControl>
               <TextField
                 label="Nome"
-                value={user}
+                value={user.nome}
                 onChange={(e) => {
                   setUser({ ...user, nome: e.target.value });
                 }}
@@ -88,9 +109,22 @@ export function Registo({ theme, user, setUser }) {
             <FormControl>
               <TextField
                 label="Email"
-                value={user}
+                value={user.email}
                 onChange={(e) => {
-                  setUser({ ...user, nome: e.target.value });
+                  setUser({ ...user, email: e.target.value });
+                }}
+                style={{ backgroundColor: "white" }}
+                type="text"
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={12}>
+            <FormControl>
+              <TextField
+                label="Morada"
+                value={user.morada}
+                onChange={(e) => {
+                  setUser({ ...user, morada: e.target.value });
                 }}
                 style={{ backgroundColor: "white" }}
                 type="text"
@@ -130,7 +164,7 @@ export function Registo({ theme, user, setUser }) {
               variant="contained"
               color="primary"
               className="form__custom-button"
-              onClick={logIn}
+              onClick={registar}
               sx={{ m: 1 }}
             >
               Registar

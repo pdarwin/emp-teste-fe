@@ -10,7 +10,9 @@ import { indigo, orange } from "@mui/material/colors";
 import { Registo } from "./Componentes/Registo";
 
 function App() {
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({});
+
+  const API_URL = "http://localhost:8080";
 
   const myTheme = createTheme({
     palette: {
@@ -32,7 +34,14 @@ function App() {
           ></Route>
           <Route
             path="/registo"
-            element={<Registo theme={myTheme} user={user} setUser={setUser} />}
+            element={
+              <Registo
+                theme={myTheme}
+                user={user}
+                setUser={setUser}
+                API_URL={API_URL}
+              />
+            }
           ></Route>
           <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
           <Route path="/autores"></Route>
