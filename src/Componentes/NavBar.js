@@ -17,6 +17,7 @@ import { ThemeProvider } from "@mui/material";
 import { makeStyles } from "@material-ui/core/styles";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import Menu from "@mui/material/Menu";
+import { indigo } from "@mui/material/colors";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,9 +37,11 @@ const pages = [
 ];
 
 const menuadmin = [
-  { name: "Livros", link: "/livros" },
-  { name: "Autores", link: "/autores" },
-  { name: "Editoras", link: "/editoras" },
+  { name: "Gestão de livros", link: "/livros" },
+  { name: "Gestão de autores", link: "/autores" },
+  { name: "Gestão de editoras", link: "/editoras" },
+  { name: "Lista de clientes", link: "/clientes" },
+  { name: "Lista de funcionários", link: "/staff" },
 ];
 
 function NavBar(props) {
@@ -48,7 +51,7 @@ function NavBar(props) {
 
   return (
     <ThemeProvider theme={props.theme}>
-      <AppBar position="static" color="primary" enableColorOnDark>
+      <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Typography
@@ -115,14 +118,14 @@ function NavBar(props) {
             </Box>
             <Box sx={{ flexGrow: 0, mx: 2 }}>
               <Tooltip title="Entrar">
-                <IconButton
+                <Button
                   onClick={() => {
                     navigate("/login");
                   }}
-                  sx={{ p: 0 }}
+                  sx={{ p: 0, color: indigo[100] }}
                 >
                   Entrar
-                </IconButton>
+                </Button>
               </Tooltip>
             </Box>
           </Toolbar>
