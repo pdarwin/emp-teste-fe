@@ -1,5 +1,6 @@
 import Button from "@mui/material/Button";
-// import { DataGrid } from "@material-ui/data-grid";
+
+import DataTable from "./DataTable";
 
 import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,12 +17,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export function Editoras(props) {
-  const columns = [
-    { field: "id", headerName: "ID" },
-    { field: "title", headerName: "Title", width: 300 },
-    { field: "body", headerName: "Body", width: 600 },
-  ];
-
   const paperStyle = { padding: "50px 20px", width: 600, margin: "20px auto" };
   const [nome, setNome] = useState("");
   const [morada, setMorada] = useState("");
@@ -48,6 +43,7 @@ export function Editoras(props) {
         setEditoras(result);
       });
   }, []);
+
   return (
     <ThemeProvider theme={props.theme}>
       <Container>
@@ -100,6 +96,7 @@ export function Editoras(props) {
             </Paper>
           ))}
         </Paper>
+        <DataTable />
       </Container>
     </ThemeProvider>
   );
