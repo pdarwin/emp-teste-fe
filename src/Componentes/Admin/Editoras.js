@@ -2,11 +2,8 @@ import { ThemeProvider } from "@emotion/react";
 import {
   Alert,
   Button,
-  FilledInput,
   FormControl,
   Grid,
-  InputAdornment,
-  InputLabel,
   Modal,
   TextField,
   Typography,
@@ -14,25 +11,14 @@ import {
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { indigo } from "@mui/material/colors";
-import { DatePicker, LocalizationProvider } from "@mui/lab";
-import AdapterDateFns from "@mui/lab/AdapterDateFns";
-import { styled } from "@mui/system";
 
 const columns = [
   { field: "nome", headerName: "Nome", width: 200 },
   { field: "morada", headerName: "Morada", width: 200 },
-
   {
     field: "ativo",
     headerName: "Ativo",
     type: "boolean",
-    width: 5,
-    editable: true,
-  },
-  {
-    field: "stock",
-    headerName: "Stock",
-    type: "number",
     width: 5,
     editable: true,
   },
@@ -102,6 +88,8 @@ export default function Editoras({ theme, user, API_URL }) {
       })
       .then((parsedResponse) => {
         if (parsedResponse.statusOk) {
+          setEditoras([...editoras, editora]);
+          setEditora({ ...editora, nome: "", morada: "" });
           setErr("Registo bem sucedido");
           setErrLevel("success");
           handleOpen();
