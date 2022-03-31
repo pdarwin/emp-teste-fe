@@ -4,13 +4,22 @@ import { Login } from "./Componentes/Login";
 import { Editoras } from "./Componentes/Admin/Editoras";
 import { Autores } from "./Componentes/Admin/Autores";
 import NavBar from "./Componentes/NavBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTheme } from "@mui/material";
 import { indigo, orange } from "@mui/material/colors";
 import { Registo } from "./Componentes/Registo";
+import Clientes from "./Componentes/Admin/Clientes";
 
 function App() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({
+    nome: "",
+    email: "",
+    morada: "",
+    data_nascimento: null,
+    password: "",
+    ativo: true,
+    cliente: true,
+  });
 
   const API_URL = "http://localhost:8080";
 
@@ -21,6 +30,10 @@ function App() {
     },
   });
 
+  useEffect(() => {
+    document.title = "Livraria Requalificar";
+  }, []);
+
   return (
     <div className="App">
       <BrowserRouter>
@@ -30,17 +43,19 @@ function App() {
           <Route path="/contactos"></Route>
           <Route
             path="/login"
-            element={<Login theme={myTheme} user={user} setUser={setUser} />}
-          ></Route>
-          <Route
-            path="/registo"
             element={
-              <Registo
+              <Login
                 theme={myTheme}
                 user={user}
                 setUser={setUser}
                 API_URL={API_URL}
               />
+            }
+          ></Route>
+          <Route
+            path="/registo"
+            element={
+              <Registo theme={myTheme} setUserApp={setUser} API_URL={API_URL} />
             }
           ></Route>
           <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
@@ -49,7 +64,10 @@ function App() {
             path="/editoras"
             element={<Editoras theme={myTheme} />}
           ></Route>
-          <Route path="/clientes"></Route>
+          <Route
+            path="/clientes"
+            element={<Clientes theme={myTheme} API_URL={API_URL} />}
+          ></Route>
           <Route path="/staff"></Route>
         </Routes>
       </BrowserRouter>
