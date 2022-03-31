@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
-import { Editoras } from "./Componentes/Admin/Editoras";
+import Editoras from "./Componentes/Admin/Editoras";
 import { Autores } from "./Componentes/Admin/Autores";
 import NavBar from "./Componentes/NavBar";
 import { useEffect, useState } from "react";
@@ -68,7 +68,7 @@ function App() {
           <Route path="/autores"></Route>
           <Route
             path="/editoras"
-            element={<Editoras theme={myTheme} />}
+            element={<Editoras theme={myTheme} API_URL={API_URL} />}
           ></Route>
           <Route
             path="/clientes"

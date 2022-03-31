@@ -29,10 +29,8 @@ const DataTable = () => {
         columns={columns}
         pageSize={50}
         checkboxSelection
-        onSelectionModelChange={({ selectionModel }) => {
-          const rowIds = selectionModel.map((rowId) =>
-            parseInt(String(rowId), 10)
-          );
+        onSelectionModelChange={({}) => {
+          const rowIds = rows.map((rowId) => parseInt(String(rowId), 10));
           const rowsToDelete = tableData.filter((row) =>
             rowIds.includes(row.id)
           );

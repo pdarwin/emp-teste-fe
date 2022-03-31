@@ -10,7 +10,7 @@ const columns = [
     field: "ativo",
     headerName: "Ativo",
     type: "boolean",
-    width: 5,
+    width: 10,
     editable: true,
   },
   ,
@@ -31,7 +31,7 @@ export default function Clientes({ theme, API_URL }) {
         console.log(response);
         // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
         if (response.status !== 200) {
-          throw new Error("There was an error finding pessoas");
+          throw new Error("There was an error finding pessoas!");
         }
 
         return response.json();
