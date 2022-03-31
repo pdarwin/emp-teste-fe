@@ -7,7 +7,9 @@ import {
   Grid,
   InputAdornment,
   InputLabel,
+  MenuItem,
   Modal,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -39,6 +41,8 @@ const columns = [
 
 export default function Livros({ theme, user, API_URL }) {
   const [livros, setLivros] = React.useState([]);
+  const [autores, setAutores] = React.useState([]);
+  const [selAutores, setSelAutores] = React.useState([]);
   const [livro, setLivro] = React.useState({
     titulo: "",
     isbn: "",
@@ -65,6 +69,7 @@ export default function Livros({ theme, user, API_URL }) {
 
   React.useEffect(() => {
     getLivros();
+    getAutores();
   }, []);
 
   function getLivros() {
@@ -82,6 +87,27 @@ export default function Livros({ theme, user, API_URL }) {
       })
       .then((parsedResponse) => {
         setLivros(parsedResponse);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+
+  function getAutores() {
+    fetch(API_URL + "/getAutores", {
+      headers: { "Content-type": "application/json" },
+    })
+      .then((response) => {
+        console.log(response);
+        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+        if (response.status !== 200) {
+          throw new Error("Erro:" + response.status);
+        }
+
+        return response.json();
+      })
+      .then((parsedResponse) => {
+        setAutores(parsedResponse);
       })
       .catch((error) => {
         alert(error);
@@ -190,21 +216,27 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={4}>
-            <FormControl variant="outlined">
-              <TextField
-                label="ISBN"
-                value={livro.isbn}
+          <Grid item xs={5}>
+            <FormControl fullWidth>
+              <InputLabel id="autor">Autor</InputLabel>
+              <Select
+                labelId="autor"
+                id="autor"
+                value={livro.autor_id}
+                label="Autor"
                 onChange={(e) => {
-                  setLivro({ ...livro, isbn: e.target.value });
+                  setLivro({ ...livro, autor_id: e.target.value });
                 }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
+              >
+                {autores.map((autor) => (
+                  <MenuItem value={autor.id} key={autor.id}>
+                    {autor.nome}
+                  </MenuItem>
+                ))}
+              </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Data de lançamento"
@@ -219,10 +251,10 @@ export default function Livros({ theme, user, API_URL }) {
           <Grid item xs={4}>
             <FormControl variant="outlined">
               <TextField
-                label="N.º páginas"
-                value={livro.num_paginas}
+                label="ISBN"
+                value={livro.isbn}
                 onChange={(e) => {
-                  setLivro({ ...livro, num_paginas: e.target.value });
+                  setLivro({ ...livro, isbn: e.target.value });
                 }}
                 style={{ backgroundColor: "white" }}
                 type="text"
@@ -230,7 +262,23 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={2}>
+            <FormControl variant="outlined">
+              <TextField
+                label="N.º páginas"
+                value={livro.num_paginas}
+                onChange={(e) => {
+                  setLivro({ ...livro, num_paginas: e.target.value });
+                }}
+                style={{ backgroundColor: "white" }}
+                type="number"
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                required
+              />
+            </FormControl>
+          </Grid>
+
+          <Grid item xs={3}>
             <FormControl variant="outlined">
               <TextField
                 label="Sinopse"
@@ -245,7 +293,7 @@ export default function Livros({ theme, user, API_URL }) {
             </FormControl>
           </Grid>
 
-          <Grid item xs={4}>
+          <Grid item xs={3}>
             <FormControl variant="outlined">
               <TextField
                 label="Edição"
@@ -259,7 +307,7 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={9}>
             <label htmlFor="contained-button-file">
               <Input
                 accept="image/*"
@@ -278,7 +326,7 @@ export default function Livros({ theme, user, API_URL }) {
               </Button>
             </label>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={3}>
             <InputLabel htmlFor="filled-adornment-amount">Preço</InputLabel>
             <FormControl variant="outlined">
               <FilledInput
@@ -291,6 +339,7 @@ export default function Livros({ theme, user, API_URL }) {
                   <InputAdornment position="start">€</InputAdornment>
                 }
                 style={{ backgroundColor: "white" }}
+                type="number"
                 inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
               />
             </FormControl>

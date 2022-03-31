@@ -9,6 +9,7 @@ import { createTheme } from "@mui/material";
 import { indigo, orange } from "@mui/material/colors";
 import { Registo } from "./Componentes/Registo";
 import Clientes from "./Componentes/Admin/Clientes";
+import Livros from "./Componentes/Admin/Livros";
 
 function App() {
   const [user, setUser] = useState({
@@ -64,7 +65,10 @@ function App() {
               <Registo theme={myTheme} setUser={setUser} API_URL={API_URL} />
             }
           ></Route>
-          <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
+          <Route
+            path="/livros"
+            element={<Livros theme={myTheme} API_URL={API_URL} />}
+          ></Route>
           <Route
             path="/autores"
             element={<Autores theme={myTheme} API_URL={API_URL} />}
