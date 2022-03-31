@@ -65,7 +65,10 @@ function App() {
             }
           ></Route>
           <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
-          <Route path="/autores"></Route>
+          <Route
+            path="/autores"
+            element={<Autores theme={myTheme} API_URL={API_URL} />}
+          ></Route>
           <Route
             path="/editoras"
             element={<Editoras theme={myTheme} API_URL={API_URL} />}

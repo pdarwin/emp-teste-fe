@@ -21,7 +21,6 @@ import { styled } from "@mui/system";
 const columns = [
   { field: "titulo", headerName: "Título", width: 200 },
   { field: "preco", headerName: "Preço", width: 200 },
-
   {
     field: "ativo",
     headerName: "Ativo",

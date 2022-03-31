@@ -66,44 +66,60 @@ export default function Editoras({ theme, user, API_URL }) {
   }
 
   function gravar() {
-    fetch(API_URL + "/addEditora", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        nome: editora.nome,
-        morada: editora.morada,
-        ativo: true,
-      }),
-    })
-      .then((response) => {
-        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
-        console.log(response);
-        /*           if (response.status !== 200) {
+    if (valida()) {
+      fetch(API_URL + "/addEditora", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          nome: editora.nome,
+          morada: editora.morada,
+          ativo: true,
+        }),
+      })
+        .then((response) => {
+          // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+          console.log(response);
+          /*           if (response.status !== 200) {
             throw new Error(response.status.toString);
           } */
 
-        return response.json();
-      })
-      .then((parsedResponse) => {
-        if (parsedResponse.statusOk) {
-          editora.id = parsedResponse.newID;
-          editora.ativo = true;
-          setEditoras([...editoras, editora]);
-          setEditora({ ...editora, nome: "", morada: "" });
-          setErr("Registo bem sucedido");
-          setErrLevel("success");
-          handleOpen();
-        } else {
-          setErr(parsedResponse.msg);
-          setErrLevel("error");
-          handleOpen();
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
+          return response.json();
+        })
+        .then((parsedResponse) => {
+          if (parsedResponse.statusOk) {
+            editora.id = parsedResponse.newID;
+            editora.ativo = true;
+            setEditoras([...editoras, editora]);
+            setEditora({ ...editora, nome: "", morada: "" });
+            setErr("Registo bem sucedido");
+            setErrLevel("success");
+            handleOpen();
+          } else {
+            setErr(parsedResponse.msg);
+            setErrLevel("error");
+            handleOpen();
+          }
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
+  }
+
+  function valida() {
+    if (editora.nome === "") {
+      setErr("Nome não preenchido");
+      handleOpen();
+      return false;
+    }
+    if (editora.morada === "") {
+      setErr("Morada não preenchida");
+      handleOpen();
+      return false;
+    }
+    return true;
   }
 
   return (

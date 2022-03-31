@@ -50,7 +50,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
   const navigate = useNavigate();
 
   function registar() {
-    if (validar()) {
+    if (valida()) {
       fetch(API_URL + "/addCliente", {
         method: "POST",
         headers: {
@@ -91,7 +91,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
     }
   }
 
-  function validar() {
+  function valida() {
     if (newUser.nome === "") {
       setErr("Nome não preenchido");
       handleOpen();
@@ -134,34 +134,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
       handleOpen();
       return false;
     }
-
-    let ok;
-    fetch(API_URL + "/validateEmail", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        email: newUser.email,
-      }),
-    })
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .then((parsedResponse) => {
-        console.log(parsedResponse);
-        if (!parsedResponse.statusOk) {
-          ok = parsedResponse.statusOk;
-          setErr(parsedResponse.msg);
-          handleOpen();
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
-
-    return ok;
+    return true;
   }
 
   return (
