@@ -123,6 +123,7 @@ export default function Livros({ theme, user, API_URL }) {
           handleOpen();
         } else {
           setErr(parsedResponse.msg);
+          setErrLevel("error");
           handleOpen();
         }
       })

@@ -87,7 +87,7 @@ function NavBar({ theme, user, setUser }) {
               <PopupState variant="popover" popupId="demo-popup-menu">
                 {(popupState) => (
                   <React.Fragment>
-                    <Button variant="contained" {...bindTrigger(popupState)}>
+                    <Button variant="" {...bindTrigger(popupState)}>
                       Administração
                     </Button>
                     <Menu {...bindMenu(popupState)}>

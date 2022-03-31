@@ -88,6 +88,8 @@ export default function Editoras({ theme, user, API_URL }) {
       })
       .then((parsedResponse) => {
         if (parsedResponse.statusOk) {
+          editora.id = parsedResponse.newID;
+          editora.ativo = true;
           setEditoras([...editoras, editora]);
           setEditora({ ...editora, nome: "", morada: "" });
           setErr("Registo bem sucedido");
@@ -95,6 +97,7 @@ export default function Editoras({ theme, user, API_URL }) {
           handleOpen();
         } else {
           setErr(parsedResponse.msg);
+          setErrLevel("error");
           handleOpen();
         }
       })
