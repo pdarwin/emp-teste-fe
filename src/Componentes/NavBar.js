@@ -40,17 +40,17 @@ const menuadmin = [
   { name: "Gestão de livros", link: "/livros" },
   { name: "Gestão de autores", link: "/autores" },
   { name: "Gestão de editoras", link: "/editoras" },
-  { name: "Lista de clientes", link: "/clientes" },
-  { name: "Lista de funcionários", link: "/staff" },
+  { name: "Gestão de clientes", link: "/clientes" },
+  { name: "Gestão de funcionários", link: "/staff" },
 ];
 
-function NavBar(props) {
+function NavBar({ theme, user, setUser }) {
   const navigate = useNavigate();
 
   const classes = useStyles();
 
   return (
-    <ThemeProvider theme={props.theme}>
+    <ThemeProvider theme={theme}>
       <AppBar position="static">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -117,16 +117,38 @@ function NavBar(props) {
               </Tooltip>
             </Box>
             <Box sx={{ flexGrow: 0, mx: 2 }}>
-              <Tooltip title="Entrar">
-                <Button
-                  onClick={() => {
-                    navigate("/login");
-                  }}
-                  sx={{ p: 0, color: indigo[100] }}
-                >
-                  Entrar
-                </Button>
-              </Tooltip>
+              {user.username === "" ? (
+                <Tooltip title="Entrar">
+                  <Button
+                    onClick={() => {
+                      navigate("/login");
+                    }}
+                    sx={{ p: 0, color: indigo[100] }}
+                  >
+                    Entrar
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Typography>
+                  {user.username}
+                  <Tooltip title="Sair da aplicação">
+                    <Button
+                      onClick={() => {
+                        setUser({
+                          ...user,
+                          nome: "",
+                          username: "",
+                          staff: false,
+                        });
+                        navigate("/");
+                      }}
+                      sx={{ p: 0, color: indigo[100] }}
+                    >
+                      Sair
+                    </Button>
+                  </Tooltip>
+                </Typography>
+              )}
             </Box>
           </Toolbar>
         </Container>

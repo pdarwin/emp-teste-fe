@@ -1,16 +1,21 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Loja } from "./Componentes/Loja/Loja";
+import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
 import { Editoras } from "./Componentes/Admin/Editoras";
 import { Autores } from "./Componentes/Admin/Autores";
 import NavBar from "./Componentes/NavBar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createTheme } from "@mui/material";
 import { indigo, orange } from "@mui/material/colors";
 import { Registo } from "./Componentes/Registo";
+import Clientes from "./Componentes/Admin/Clientes";
 
 function App() {
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState({
+    nome: "",
+    username: "",
+    staff: false,
+  });
 
   const API_URL = "http://localhost:8080";
 
@@ -21,26 +26,42 @@ function App() {
     },
   });
 
+  useEffect(() => {
+    document.title = "Livraria Requalificar";
+  }, []);
+
   return (
     <div className="App">
       <BrowserRouter>
-        <NavBar theme={myTheme} user={user} />
+        <NavBar theme={myTheme} user={user} setUser={setUser} />
         <Routes>
-          <Route path="/" element={<Loja theme={myTheme} />}></Route>
-          <Route path="/contactos"></Route>
           <Route
-            path="/login"
-            element={<Login theme={myTheme} user={user} setUser={setUser} />}
-          ></Route>
-          <Route
-            path="/registo"
+            path="/"
             element={
-              <Registo
+              <Loja
                 theme={myTheme}
                 user={user}
                 setUser={setUser}
                 API_URL={API_URL}
               />
+            }
+          ></Route>
+          <Route path="/contactos"></Route>
+          <Route
+            path="/login"
+            element={
+              <Login
+                theme={myTheme}
+                user={user}
+                setUser={setUser}
+                API_URL={API_URL}
+              />
+            }
+          ></Route>
+          <Route
+            path="/registo"
+            element={
+              <Registo theme={myTheme} setUser={setUser} API_URL={API_URL} />
             }
           ></Route>
           <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
@@ -49,7 +70,10 @@ function App() {
             path="/editoras"
             element={<Editoras theme={myTheme} />}
           ></Route>
-          <Route path="/clientes"></Route>
+          <Route
+            path="/clientes"
+            element={<Clientes theme={myTheme} API_URL={API_URL} />}
+          ></Route>
           <Route path="/staff"></Route>
         </Routes>
       </BrowserRouter>
