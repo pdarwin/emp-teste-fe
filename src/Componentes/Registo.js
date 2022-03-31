@@ -135,6 +135,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
       return false;
     }
 
+    let ok;
     fetch(API_URL + "/validateEmail", {
       method: "POST",
       headers: {
@@ -145,21 +146,22 @@ export function Registo({ theme, user, setUser, API_URL }) {
       }),
     })
       .then((response) => {
-        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
         console.log(response);
-        if (response.status !== 200) {
-          setErr("Este email já se encontra registado");
-          handleOpen();
-          return false;
-        }
         return response.json();
       })
-      .then((parsedResponse) => {})
+      .then((parsedResponse) => {
+        console.log(parsedResponse);
+        if (!parsedResponse.statusOk) {
+          ok = parsedResponse.statusOk;
+          setErr(parsedResponse.msg);
+          handleOpen();
+        }
+      })
       .catch((error) => {
         alert(error);
       });
 
-    return true;
+    return ok;
   }
 
   return (
