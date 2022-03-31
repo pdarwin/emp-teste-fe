@@ -96,6 +96,7 @@ export function Editoras(props) {
             </Paper>
           ))}
         </Paper>
+
         <DataTable />
       </Container>
     </ThemeProvider>
