@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
 import Editoras from "./Componentes/Admin/Editoras";
-import { Autores } from "./Componentes/Admin/Autores";
+import Autores from "./Componentes/Admin/Autores";
 import NavBar from "./Componentes/NavBar";
 import { useEffect, useState } from "react";
 import { createTheme } from "@mui/material";
@@ -65,7 +65,10 @@ function App() {
             }
           ></Route>
           <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
-          <Route path="/autores"></Route>
+          <Route
+            path="/autores"
+            element={<Autores theme={myTheme} API_URL={API_URL} />}
+          ></Route>
           <Route
             path="/editoras"
             element={<Editoras theme={myTheme} API_URL={API_URL} />}
