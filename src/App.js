@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
 import Editoras from "./Componentes/Admin/Editoras";
-import { Autores } from "./Componentes/Admin/Autores";
+import Autores from "./Componentes/Admin/Autores";
 import NavBar from "./Componentes/NavBar";
 import { useEffect, useState } from "react";
 import { createTheme } from "@mui/material";
