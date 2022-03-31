@@ -38,7 +38,6 @@ const DataTable = () => {
           );
           setDeletedRows(rowsToDelete);
           console.log(deletedRows);
-          <DataGrid />;
         }}
       />
     </div>
