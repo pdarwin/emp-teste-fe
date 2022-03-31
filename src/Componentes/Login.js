@@ -14,7 +14,11 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function Login({ theme, user, setUser, API_URL }) {
-  const [email, setEmail] = useState("");
+  const [newUser, setNewUser] = useState({
+    nome: "",
+    email: "",
+    staff: false,
+  });
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
@@ -36,7 +40,7 @@ export function Login({ theme, user, setUser, API_URL }) {
           "Content-type": "application/json",
         },
         body: JSON.stringify({
-          email: user.email,
+          email: newUser.email,
           password: password,
         }),
       })
@@ -50,7 +54,12 @@ export function Login({ theme, user, setUser, API_URL }) {
           return response.json();
         })
         .then((parsedResponse) => {
-          setUser({ ...user, email: email });
+          setUser({
+            ...user,
+            username: newUser.email,
+            nome: newUser.nome,
+            staff: newUser.staff,
+          });
           setErr("Login bem sucedido");
           setErrLevel("success");
           handleOpen();
@@ -61,7 +70,7 @@ export function Login({ theme, user, setUser, API_URL }) {
     }
   };
   function validar() {
-    if (user.email === "") {
+    if (newUser.email === "") {
       setErr("Email não preenchido");
       handleOpen();
       return false;
@@ -104,9 +113,9 @@ export function Login({ theme, user, setUser, API_URL }) {
             <FormControl>
               <TextField
                 label="Email ou username"
-                value={email}
+                value={newUser.email}
                 onChange={(e) => {
-                  setEmail(e.target.value);
+                  setNewUser({ ...newUser, email: e.target.value });
                 }}
                 style={{ backgroundColor: "white" }}
                 type="text"

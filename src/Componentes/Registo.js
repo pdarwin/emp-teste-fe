@@ -19,17 +19,16 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DatePicker from "@mui/lab/DatePicker";
 
-export function Registo({ theme, setUserApp, API_URL }) {
-  const [user, setUser] = useState({
+export function Registo({ theme, user, setUser, API_URL }) {
+  const [newUser, setNewUser] = useState({
     nome: "",
     email: "",
     morada: "",
     data_nascimento: null,
     password: "",
     ativo: true,
-    cliente: true,
+    staff: false,
   });
-  const [tipo, setTipo] = useState();
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
 
@@ -58,10 +57,10 @@ export function Registo({ theme, setUserApp, API_URL }) {
           "Content-type": "application/json",
         },
         body: JSON.stringify({
-          nome: user.nome,
-          data_nascimento: user.data_nascimento,
-          email: user.email,
-          morada: user.morada,
+          nome: newUser.nome,
+          data_nascimento: newUser.data_nascimento,
+          email: newUser.email,
+          morada: newUser.morada,
           password: password,
           ativo: true,
         }),
@@ -76,6 +75,12 @@ export function Registo({ theme, setUserApp, API_URL }) {
           return response.json();
         })
         .then((parsedResponse) => {
+          setUser({
+            ...user,
+            nome: newUser.nome,
+            username: newUser.email,
+            staff: newUser.staff,
+          });
           setErr("Registo bem sucedido");
           setErrLevel("success");
           handleOpen();
@@ -87,22 +92,22 @@ export function Registo({ theme, setUserApp, API_URL }) {
   }
 
   function validar() {
-    if (user.nome === "") {
+    if (newUser.nome === "") {
       setErr("Nome não preenchido");
       handleOpen();
       return false;
     }
-    if (user.email === "") {
+    if (newUser.email === "") {
       setErr("Email não preenchido");
       handleOpen();
       return false;
     }
-    if (!validEmail.test(user.email)) {
+    if (!validEmail.test(newUser.email)) {
       setErr("Email inválido");
       handleOpen();
       return false;
     }
-    if (user.morada === "") {
+    if (newUser.morada === "") {
       setErr("Morada não preenchida");
       handleOpen();
       return false;
@@ -112,7 +117,7 @@ export function Registo({ theme, setUserApp, API_URL }) {
       handleOpen();
       return false;
     }
-    if (user.data_nascimento === null) {
+    if (newUser.data_nascimento === null) {
       setErr("Data de nascimento não preenchida");
       handleOpen();
       return false;
@@ -129,6 +134,30 @@ export function Registo({ theme, setUserApp, API_URL }) {
       handleOpen();
       return false;
     }
+
+    fetch(API_URL + "/validateEmail", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        email: newUser.email,
+      }),
+    })
+      .then((response) => {
+        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+        console.log(response);
+        if (response.status !== 200) {
+          setErr("Este email já se encontra registado");
+          handleOpen();
+          return false;
+        }
+        return response.json();
+      })
+      .then((parsedResponse) => {})
+      .catch((error) => {
+        alert(error);
+      });
 
     return true;
   }
@@ -162,9 +191,9 @@ export function Registo({ theme, setUserApp, API_URL }) {
             <FormControl>
               <TextField
                 label="Nome"
-                value={user.nome}
+                value={newUser.nome}
                 onChange={(e) => {
-                  setUser({ ...user, nome: e.target.value });
+                  setNewUser({ ...newUser, nome: e.target.value });
                 }}
                 style={{ backgroundColor: "white" }}
                 type="text"
@@ -176,9 +205,9 @@ export function Registo({ theme, setUserApp, API_URL }) {
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 label="Data de nascimento"
-                value={user.data_nascimento}
+                value={newUser.data_nascimento}
                 onChange={(newValue) => {
-                  setUser({ ...user, data_nascimento: newValue });
+                  setNewUser({ ...newUser, data_nascimento: newValue });
                 }}
                 renderInput={(params) => <TextField {...params} />}
               />
@@ -192,19 +221,20 @@ export function Registo({ theme, setUserApp, API_URL }) {
               <RadioGroup
                 row
                 aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue="cliente"
+                defaultValue={false}
                 name="radio-buttons-group"
+                onChange={(e) => {
+                  setNewUser({ ...newUser, staff: false });
+                }}
+                value={newUser.staff}
               >
                 <FormControlLabel
-                  value="cliente"
+                  value={false}
                   control={<Radio />}
                   label="Cliente"
-                  onChange={(e) => {
-                    setTipo(e.target.value);
-                  }}
                 />
                 <FormControlLabel
-                  value="staff"
+                  value={true}
                   control={<Radio />}
                   label="Funcionário"
                 />
@@ -215,9 +245,9 @@ export function Registo({ theme, setUserApp, API_URL }) {
             <FormControl>
               <TextField
                 label="Email"
-                value={user.email}
+                value={newUser.email}
                 onChange={(e) => {
-                  setUser({ ...user, email: e.target.value });
+                  setNewUser({ ...newUser, email: e.target.value });
                 }}
                 style={{ backgroundColor: "white" }}
                 type="text"
@@ -229,9 +259,9 @@ export function Registo({ theme, setUserApp, API_URL }) {
             <FormControl>
               <TextField
                 label="Morada"
-                value={user.morada}
+                value={newUser.morada}
                 onChange={(e) => {
-                  setUser({ ...user, morada: e.target.value });
+                  setNewUser({ ...newUser, morada: e.target.value });
                 }}
                 style={{ backgroundColor: "white" }}
                 type="text"

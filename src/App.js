@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { Loja } from "./Componentes/Loja/Loja";
+import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
 import { Editoras } from "./Componentes/Admin/Editoras";
 import { Autores } from "./Componentes/Admin/Autores";
@@ -13,12 +13,8 @@ import Clientes from "./Componentes/Admin/Clientes";
 function App() {
   const [user, setUser] = useState({
     nome: "",
-    email: "",
-    morada: "",
-    data_nascimento: null,
-    password: "",
-    ativo: true,
-    cliente: true,
+    username: "",
+    staff: false,
   });
 
   const API_URL = "http://localhost:8080";
@@ -37,9 +33,19 @@ function App() {
   return (
     <div className="App">
       <BrowserRouter>
-        <NavBar theme={myTheme} user={user} />
+        <NavBar theme={myTheme} user={user} setUser={setUser} />
         <Routes>
-          <Route path="/" element={<Loja theme={myTheme} />}></Route>
+          <Route
+            path="/"
+            element={
+              <Loja
+                theme={myTheme}
+                user={user}
+                setUser={setUser}
+                API_URL={API_URL}
+              />
+            }
+          ></Route>
           <Route path="/contactos"></Route>
           <Route
             path="/login"
@@ -55,7 +61,7 @@ function App() {
           <Route
             path="/registo"
             element={
-              <Registo theme={myTheme} setUserApp={setUser} API_URL={API_URL} />
+              <Registo theme={myTheme} setUser={setUser} API_URL={API_URL} />
             }
           ></Route>
           <Route path="/livros" element={<Autores theme={myTheme} />}></Route>

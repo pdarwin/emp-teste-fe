@@ -44,7 +44,7 @@ const menuadmin = [
   { name: "Gestão de funcionários", link: "/staff" },
 ];
 
-function NavBar({ theme, user }) {
+function NavBar({ theme, user, setUser }) {
   const navigate = useNavigate();
 
   const classes = useStyles();
@@ -117,7 +117,7 @@ function NavBar({ theme, user }) {
               </Tooltip>
             </Box>
             <Box sx={{ flexGrow: 0, mx: 2 }}>
-              {user.email === "" ? (
+              {user.username === "" ? (
                 <Tooltip title="Entrar">
                   <Button
                     onClick={() => {
@@ -129,7 +129,25 @@ function NavBar({ theme, user }) {
                   </Button>
                 </Tooltip>
               ) : (
-                <Typography>{user.email}</Typography>
+                <Typography>
+                  {user.username}
+                  <Tooltip title="Sair da aplicação">
+                    <Button
+                      onClick={() => {
+                        setUser({
+                          ...user,
+                          nome: "",
+                          username: "",
+                          staff: false,
+                        });
+                        navigate("/");
+                      }}
+                      sx={{ p: 0, color: indigo[100] }}
+                    >
+                      Sair
+                    </Button>
+                  </Tooltip>
+                </Typography>
               )}
             </Box>
           </Toolbar>
