@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import { ThemeProvider } from "@mui/material";
 
 const columns = [
   { field: "nome", headerName: "Nome", width: 200 },
@@ -44,13 +45,15 @@ export default function Clientes({ theme, API_URL }) {
       });
   }
   return (
-    <div style={{ height: 400, width: "100%" }}>
-      <DataGrid
-        rows={clientes}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-      />
-    </div>
+    <ThemeProvider theme={theme}>
+      <div style={{ height: 400, width: "100%" }}>
+        <DataGrid
+          rows={clientes}
+          columns={columns}
+          pageSize={5}
+          rowsPerPageOptions={[5]}
+        />
+      </div>
+    </ThemeProvider>
   );
 }

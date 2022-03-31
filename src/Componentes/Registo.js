@@ -37,7 +37,6 @@ export function Registo({ theme, user, setUser, API_URL }) {
   const [errLevel, setErrLevel] = React.useState("error");
   const [err, setErr] = React.useState("");
   const handleOpen = () => setOpen(true);
-
   const handleClose = () => {
     setOpen(false);
   };
@@ -169,7 +168,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
             <Typography variant="h5">Registo de utilizador</Typography>
           </Grid>
           <Grid item xs={3}>
-            <FormControl>
+            <FormControl variant="outlined">
               <TextField
                 label="Nome"
                 value={newUser.nome}
@@ -195,7 +194,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={6}>
-            <FormControl>
+            <FormControl variant="outlined">
               <FormLabel id="demo-radio-buttons-group-label">
                 Tipo de utilizador
               </FormLabel>
@@ -223,7 +222,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
             </FormControl>
           </Grid>
           <Grid item xs={3}>
-            <FormControl>
+            <FormControl variant="outlined">
               <TextField
                 label="Email"
                 value={newUser.email}
@@ -237,7 +236,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
             </FormControl>
           </Grid>
           <Grid item xs={8}>
-            <FormControl>
+            <FormControl variant="outlined">
               <TextField
                 label="Morada"
                 value={newUser.morada}
@@ -252,7 +251,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
           </Grid>
 
           <Grid item xs={3}>
-            <FormControl>
+            <FormControl variant="outlined">
               <TextField
                 label="Password"
                 value={password}
@@ -266,7 +265,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
             </FormControl>
           </Grid>
           <Grid item xs={8}>
-            <FormControl>
+            <FormControl variant="outlined">
               <TextField
                 label="Confirme a password"
                 value={password2}

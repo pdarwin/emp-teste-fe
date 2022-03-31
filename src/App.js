@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
-import { Editoras } from "./Componentes/Admin/Editoras";
+import Editoras from "./Componentes/Admin/Editoras";
 import { Autores } from "./Componentes/Admin/Autores";
 import NavBar from "./Componentes/NavBar";
 import { useEffect, useState } from "react";
@@ -9,6 +9,7 @@ import { createTheme } from "@mui/material";
 import { indigo, orange } from "@mui/material/colors";
 import { Registo } from "./Componentes/Registo";
 import Clientes from "./Componentes/Admin/Clientes";
+import Livros from "./Componentes/Admin/Livros";
 
 function App() {
   const [user, setUser] = useState({
@@ -64,11 +65,14 @@ function App() {
               <Registo theme={myTheme} setUser={setUser} API_URL={API_URL} />
             }
           ></Route>
-          <Route path="/livros" element={<Autores theme={myTheme} />}></Route>
+          <Route
+            path="/livros"
+            element={<Livros theme={myTheme} API_URL={API_URL} />}
+          ></Route>
           <Route path="/autores"></Route>
           <Route
             path="/editoras"
-            element={<Editoras theme={myTheme} />}
+            element={<Editoras theme={myTheme} API_URL={API_URL} />}
           ></Route>
           <Route
             path="/clientes"
@@ -113,8 +117,8 @@ function App() {
   );
 }
 
-function VerificaUser({ user, children }) {
-  if (!user) {
+function VerificaStaff({ user, children }) {
+  if (!user.staff) {
     return <Navigate to="/" replace={true} />;
   }
   return children;

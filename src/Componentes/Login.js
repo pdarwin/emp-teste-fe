@@ -110,7 +110,7 @@ export function Login({ theme, user, setUser, API_URL }) {
             <Typography variant="h5">Entrar na aplicação</Typography>
           </Grid>
           <Grid item xs={2}>
-            <FormControl>
+            <FormControl variant="outlined">
               <TextField
                 label="Email ou username"
                 value={newUser.email}
@@ -125,7 +125,7 @@ export function Login({ theme, user, setUser, API_URL }) {
           </Grid>
 
           <Grid item xs={3}>
-            <FormControl>
+            <FormControl variant="outlined">
               <TextField
                 label="Password"
                 value={password}
