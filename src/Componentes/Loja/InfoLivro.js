@@ -55,7 +55,7 @@ export function InfoLivro({ theme, carrinho, API_URL }) {
         alert(error);
       });
   }
-
+  //teste
   return livro !== {} ? (
     <ThemeProvider theme={theme}>
       <Grid
