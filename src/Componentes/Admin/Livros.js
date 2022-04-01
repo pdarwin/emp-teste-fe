@@ -1,14 +1,18 @@
 import { ThemeProvider } from "@emotion/react";
 import {
   Alert,
+  Box,
   Button,
+  Chip,
   FilledInput,
   FormControl,
   Grid,
   InputAdornment,
   InputLabel,
+  ListItemText,
   MenuItem,
   Modal,
+  OutlinedInput,
   Select,
   TextField,
   Typography,
@@ -19,6 +23,7 @@ import { indigo } from "@mui/material/colors";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { styled } from "@mui/system";
+import { set } from "date-fns";
 
 const columns = [
   { field: "titulo", headerName: "Título", width: 200 },
@@ -42,6 +47,7 @@ const columns = [
 export default function Livros({ theme, user, API_URL }) {
   const [livros, setLivros] = React.useState([]);
   const [autores, setAutores] = React.useState([]);
+  const [autores2, setAutores2] = React.useState([]);
   const [selAutores, setSelAutores] = React.useState([]);
   const [livro, setLivro] = React.useState({
     titulo: "",
@@ -52,6 +58,7 @@ export default function Livros({ theme, user, API_URL }) {
     edicao: "",
     imagem_capa: "",
     preco: 0,
+    autores: [],
   });
 
   //Gestão do modal
@@ -66,6 +73,17 @@ export default function Livros({ theme, user, API_URL }) {
   const Input = styled("input")({
     display: "none",
   });
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
 
   React.useEffect(() => {
     getLivros();
@@ -115,6 +133,20 @@ export default function Livros({ theme, user, API_URL }) {
   }
 
   function gravar() {
+    console.log(selAutores);
+    {
+      selAutores.map((aut) => {
+        console.log(aut);
+      });
+    }
+    const autor = { id: 1 };
+    setAutores2([autores2, autor]);
+    const autor2 = { id: 2 };
+    setAutores2([autores2, autor2]);
+    setLivro({ ...livro, autores: autores2 });
+    //setLivro({ ...livro, autores: { id: 3 } });
+    console.log(autores2);
+    console.log(livro);
     fetch(API_URL + "/addLivro", {
       method: "POST",
       headers: {
@@ -129,6 +161,7 @@ export default function Livros({ theme, user, API_URL }) {
         edicao: livro.edicao,
         imagem_capa: livro.imagem_capa,
         preco: livro.preco,
+        autores: livro.autores,
         ativo: true,
       }),
     })
@@ -203,7 +236,7 @@ export default function Livros({ theme, user, API_URL }) {
             <Typography variant="h5">Registo de livro</Typography>
           </Grid>
           <Grid item xs={4}>
-            <FormControl variant="outlined">
+            <FormControl fullWidth>
               <TextField
                 label="Título"
                 value={livro.titulo}
@@ -216,17 +249,33 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
+
           <Grid item xs={5}>
             <FormControl fullWidth>
-              <InputLabel id="autor">Autor</InputLabel>
+              <InputLabel id="autor_l">Autor</InputLabel>
               <Select
                 labelId="autor"
                 id="autor"
-                value={livro.autor_id}
-                label="Autor"
+                multiple
+                value={selAutores}
                 onChange={(e) => {
-                  setLivro({ ...livro, autor_id: e.target.value });
+                  const {
+                    target: { value },
+                  } = e;
+                  setSelAutores(
+                    // On autofill we get a stringified value.
+                    typeof value === "string" ? value.split(",") : value
+                  );
                 }}
+                input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                renderValue={(selected) => (
+                  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                    {selected.map((obj) => (
+                      <Chip key={obj} label={obj} />
+                    ))}
+                  </Box>
+                )}
+                MenuProps={MenuProps}
               >
                 {autores.map((autor) => (
                   <MenuItem value={autor.id} key={autor.id}>
@@ -248,8 +297,8 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={4}>
-            <FormControl variant="outlined">
+          <Grid item xs={3}>
+            <FormControl>
               <TextField
                 label="ISBN"
                 value={livro.isbn}
@@ -262,8 +311,8 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={2}>
-            <FormControl variant="outlined">
+          <Grid item xs={1}>
+            <FormControl fullWidth>
               <TextField
                 label="N.º páginas"
                 value={livro.num_paginas}
@@ -278,8 +327,8 @@ export default function Livros({ theme, user, API_URL }) {
             </FormControl>
           </Grid>
 
-          <Grid item xs={3}>
-            <FormControl variant="outlined">
+          <Grid item xs={6}>
+            <FormControl fullWidth>
               <TextField
                 label="Sinopse"
                 value={livro.sinopse}
@@ -292,9 +341,8 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
-
-          <Grid item xs={3}>
-            <FormControl variant="outlined">
+          <Grid item xs={2}>
+            <FormControl>
               <TextField
                 label="Edição"
                 value={livro.edicao}
