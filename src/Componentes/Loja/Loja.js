@@ -63,7 +63,7 @@ export default function Loja({ theme, user, API_URL }) {
                 <img src={livro.imagem_capa} loading="lazy" />
                 <ImageListItemBar
                   title={livro.titulo}
-                  subtitle={<span>preço: {livro.preco}</span>}
+                  subtitle={<span>preço: {livro.preco}€</span>}
                   position="below"
                   key={livro.id}
                 />
