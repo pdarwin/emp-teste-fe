@@ -10,7 +10,7 @@ import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export function InfoLivro({ theme, carrinho, API_URL }) {
+export function InfoLivro({ theme, shoppingCart, addItem, API_URL }) {
   const params = useParams();
   const [livro, setLivro] = useState({
     titulo: "",
@@ -48,7 +48,6 @@ export function InfoLivro({ theme, carrinho, API_URL }) {
         return response.json();
       })
       .then((parsedResponse) => {
-        console.log(parsedResponse);
         setLivro(parsedResponse.optional);
       })
       .catch((error) => {
@@ -122,7 +121,7 @@ export function InfoLivro({ theme, carrinho, API_URL }) {
             variant="contained"
             color="primary"
             onClick={() => {
-              carrinho.addItem(livro);
+              addItem(livro);
             }}
           >
             Adicionar ao carrinho: {livro.preco}€

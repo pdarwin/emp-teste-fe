@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
 import * as React from "react";
-import { useState } from "react";
 
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
@@ -13,23 +12,12 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { ThemeProvider } from "@mui/material";
-import { makeStyles } from "@material-ui/core/styles";
+import { Badge, Paper, Popover, ThemeProvider } from "@mui/material";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import Menu from "@mui/material/Menu";
 import { indigo } from "@mui/material/colors";
-
-const useStyles = makeStyles((theme) => ({
-  root: {
-    flexGrow: 1,
-  },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
-  title: {
-    flexGrow: 1,
-  },
-}));
+import { Add, Remove, ShoppingCart } from "@mui/icons-material";
+import PaymentIcon from "@mui/icons-material/Payment";
 
 const pages = [
   { name: "Loja", link: "/" },
@@ -44,10 +32,23 @@ const menuadmin = [
   { name: "Gestão de funcionários", link: "/staff" },
 ];
 
-function NavBar({ theme, user, setUser }) {
+function NavBar({ theme, user, setUser, shoppingCart, cartControls }) {
+  const [anchor, setAnchor] = React.useState(null);
+
   const navigate = useNavigate();
 
-  const classes = useStyles();
+  function calculateSum() {
+    let total = 0.0;
+    if (!shoppingCart) {
+      return total;
+    }
+    for (let element of shoppingCart) {
+      let value = element.quantity * element.item.preco;
+      total += value;
+    }
+
+    return Math.round(total * 100) / 100;
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -107,14 +108,120 @@ function NavBar({ theme, user, setUser }) {
               </PopupState>
             </Box>
             <Box sx={{ flexGrow: 0 }}>
-              <Tooltip title="Carrinho de compras">
-                <IconButton /* onClick={handleOpenUserMenu} */ sx={{ p: 0 }}>
-                  <Avatar
-                    alt="Carrinho de compras"
-                    src="https://static.thenounproject.com/png/1385410-200.png"
-                  />
-                </IconButton>
-              </Tooltip>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                aria-label="shopping-cart"
+                onClick={(e) => {
+                  setAnchor(e.currentTarget);
+                }}
+              >
+                <Badge
+                  color="secondary"
+                  badgeContent={shoppingCart.length}
+                  showZero
+                >
+                  <Tooltip title="Carrinho de compras">
+                    <ShoppingCart />
+                  </Tooltip>
+                </Badge>
+              </IconButton>
+              <Popover
+                id={"simple-popover"}
+                open={Boolean(anchor)}
+                anchorEl={anchor}
+                onClose={() => {
+                  setAnchor(null);
+                }}
+                anchorOrigin={{
+                  vertical: "bottom",
+                  horizontal: "left",
+                }}
+              >
+                <Box
+                  sx={{
+                    width: "20em",
+                    height: "20em",
+                    overflowY: "scroll",
+                    display: "flex",
+                    alignItems: "center",
+                    flexDirection: "column",
+                  }}
+                >
+                  {shoppingCart.map((e, i) => {
+                    return (
+                      <Paper
+                        key={i}
+                        elevation={2}
+                        sx={{
+                          width: "18em",
+                          height: "5em",
+                          padding: "0.125em",
+                          boxSizing: "border-box",
+                          marginY: "0.250em",
+                          display: "flex",
+                          flexDirection: "row",
+                          justifyContent: "space-evenly",
+                        }}
+                      >
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-evenly",
+                          }}
+                        >
+                          <Typography variant="p">
+                            Name: {e.item.name}
+                          </Typography>
+                          <Typography variant="p">
+                            Quantity: {e.quantity}
+                          </Typography>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "space-evenly",
+                          }}
+                        >
+                          <IconButton
+                            color="success"
+                            onClick={() => {
+                              cartControls.increaseQuantity(e.item);
+                            }}
+                          >
+                            <Add />
+                          </IconButton>
+                          <IconButton
+                            color="error"
+                            onClick={() => {
+                              cartControls.decreaseQuantity(e.item);
+                            }}
+                          >
+                            <Remove />
+                          </IconButton>
+                        </Box>
+                      </Paper>
+                    );
+                  })}
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-evenly",
+                    }}
+                  >
+                    <Typography>Total = {calculateSum()}€ </Typography>
+                    <PaymentIcon
+                      onClick={() => {
+                        alert("Pagar");
+                      }}
+                    />
+                  </Box>
+                </Box>
+              </Popover>
             </Box>
             <Box sx={{ flexGrow: 0, mx: 2 }}>
               {user.username === "" ? (

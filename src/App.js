@@ -18,9 +18,7 @@ function App() {
     username: "",
     staff: false,
   });
-  const [carrinho, setCarrinho] = useState({
-    livros: [],
-  });
+  const [shoppingCart, setShoppingCart] = useState([]);
 
   const API_URL = "http://localhost:8080";
 
@@ -35,10 +33,59 @@ function App() {
     document.title = "Livraria Requalificar";
   }, []);
 
+  function addQuantity(item) {
+    let oldShoppingCart = shoppingCart;
+
+    //verificar se um item já existe
+    if (oldShoppingCart.some((e) => e.item.id === item.id)) {
+      oldShoppingCart = oldShoppingCart.map((e) => {
+        if (e.item.id === item.id) {
+          e.quantity++;
+        }
+        return e;
+      });
+    } else {
+      let myItem = {
+        quantity: 1,
+        item: item,
+      };
+      oldShoppingCart = [myItem, ...oldShoppingCart];
+    }
+
+    setShoppingCart(oldShoppingCart);
+  }
+
+  function removeQuanitty(item) {
+    let oldShoppingCart = shoppingCart;
+
+    //verificar se um item já existe
+    if (oldShoppingCart.some((e) => e.item.id === item.id)) {
+      oldShoppingCart = oldShoppingCart.map((e) => {
+        if (e.item.id === item.id) {
+          e.quantity--;
+        }
+        return e;
+      });
+
+      oldShoppingCart = oldShoppingCart.filter((e) => e.quantity > 0);
+
+      setShoppingCart(oldShoppingCart);
+    }
+  }
+
   return (
     <div className="App">
       <BrowserRouter>
-        <NavBar theme={myTheme} user={user} setUser={setUser} />
+        <NavBar
+          theme={myTheme}
+          user={user}
+          setUser={setUser}
+          shoppingCart={shoppingCart}
+          cartControls={{
+            increaseQuantity: addQuantity,
+            decreaseQuantity: removeQuanitty,
+          }}
+        />
         <Routes>
           <Route
             path="/"
@@ -78,7 +125,8 @@ function App() {
             element={
               <InfoLivro
                 theme={myTheme}
-                carrinho={carrinho}
+                shoppingCart={shoppingCart}
+                addItem={addQuantity}
                 API_URL={API_URL}
               />
             }
