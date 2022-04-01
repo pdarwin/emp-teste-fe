@@ -109,6 +109,7 @@ export default function Editoras({ theme, user, API_URL }) {
   }
 
   function valida() {
+    setErrLevel("error");
     if (editora.nome === "") {
       setErr("Nome não preenchido");
       handleOpen();

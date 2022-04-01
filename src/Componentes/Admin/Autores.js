@@ -150,6 +150,7 @@ export default function Autores({ theme, user, API_URL }) {
   }
 
   function valida() {
+    setErrLevel("error");
     if (autor.nome === "") {
       setErr("Nome não preenchido");
       handleOpen();

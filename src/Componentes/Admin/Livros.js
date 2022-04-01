@@ -15,6 +15,7 @@ import {
   OutlinedInput,
   Select,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import * as React from "react";
@@ -47,7 +48,6 @@ const columns = [
 export default function Livros({ theme, user, API_URL }) {
   const [livros, setLivros] = React.useState([]);
   const [autores, setAutores] = React.useState([]);
-  const [autores2, setAutores2] = React.useState([]);
   const [selAutores, setSelAutores] = React.useState([]);
   const [livro, setLivro] = React.useState({
     titulo: "",
@@ -133,61 +133,71 @@ export default function Livros({ theme, user, API_URL }) {
   }
 
   function gravar() {
-    console.log(selAutores);
-    {
-      selAutores.map((aut) => {
-        console.log(aut);
-      });
-    }
-    const autor = { id: 1 };
-    setAutores2([autores2, autor]);
-    const autor2 = { id: 2 };
-    setAutores2([autores2, autor2]);
-    setLivro({ ...livro, autores: autores2 });
-    //setLivro({ ...livro, autores: { id: 3 } });
-    console.log(autores2);
-    console.log(livro);
-    fetch(API_URL + "/addLivro", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json",
-      },
-      body: JSON.stringify({
-        titulo: livro.titulo,
-        isbn: livro.isbn,
-        data_lancamento: livro.data_lancamento,
-        num_paginas: livro.num_paginas,
-        sinopse: livro.sinopse,
-        edicao: livro.edicao,
-        imagem_capa: livro.imagem_capa,
-        preco: livro.preco,
-        autores: livro.autores,
-        ativo: true,
-      }),
-    })
-      .then((response) => {
-        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
-        console.log(response);
-        /*           if (response.status !== 200) {
+    if (valida()) {
+      {
+        // Ciclo para preencher os autores selecionados
+        selAutores.map((aut) => {
+          livro.autores.push({ id: parseInt(aut) });
+        });
+      }
+
+      fetch(API_URL + "/addLivro", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          titulo: livro.titulo,
+          isbn: livro.isbn,
+          data_lancamento: livro.data_lancamento,
+          num_paginas: livro.num_paginas,
+          sinopse: livro.sinopse,
+          edicao: livro.edicao,
+          imagem_capa: livro.imagem_capa,
+          preco: livro.preco,
+          autores: livro.autores,
+          ativo: true,
+        }),
+      })
+        .then((response) => {
+          // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+          console.log(response);
+          /*           if (response.status !== 200) {
             throw new Error(response.status.toString);
           } */
 
-        return response.json();
-      })
-      .then((parsedResponse) => {
-        if (parsedResponse.statusOk) {
-          setErr("Registo bem sucedido");
-          setErrLevel("success");
-          handleOpen();
-        } else {
-          setErr(parsedResponse.msg);
-          setErrLevel("error");
-          handleOpen();
-        }
-      })
-      .catch((error) => {
-        alert(error);
-      });
+          return response.json();
+        })
+        .then((parsedResponse) => {
+          if (parsedResponse.statusOk) {
+            livro.id = parsedResponse.newID;
+            livro.ativo = true;
+            setLivros([...livros, livro]);
+            setLivro({
+              ...livro,
+              titulo: "",
+              isbn: "",
+              data_lancamento: null,
+              num_paginas: 0,
+              sinopse: "",
+              edicao: "",
+              imagem_capa: "",
+              preco: 0,
+              autores: [],
+            });
+            setErr("Registo bem sucedido");
+            setErrLevel("success");
+            handleOpen();
+          } else {
+            setErr(parsedResponse.msg);
+            setErrLevel("error");
+            handleOpen();
+          }
+        })
+        .catch((error) => {
+          alert(error);
+        });
+    }
   }
 
   function getBase64(file) {
@@ -197,6 +207,56 @@ export default function Livros({ theme, user, API_URL }) {
       reader.onload = () => resolve(reader.result);
       reader.onerror = (error) => reject(error);
     });
+  }
+
+  function valida() {
+    setErrLevel("error");
+    if (livro.titulo === "") {
+      setErr("Título não preenchido");
+      handleOpen();
+      return false;
+    }
+    if (livro.isbn === "") {
+      setErr("ISBN não preenchido");
+      handleOpen();
+      return false;
+    }
+    if (livro.sinopse === "") {
+      setErr("Sinopse não preenchida");
+      handleOpen();
+      return false;
+    }
+    if (livro.edicao === "") {
+      setErr("Edição não preenchida");
+      handleOpen();
+      return false;
+    }
+    if (livro.imagem_capa === "") {
+      setErr("É necessário escolher uma imagem de capa");
+      handleOpen();
+      return false;
+    }
+    if (livro.data_lancamento === null) {
+      setErr("Data de lançamento não preenchida");
+      handleOpen();
+      return false;
+    }
+    if (livro.num_paginas === 0) {
+      setErr("O número de páginas tem de ser maior que zero");
+      handleOpen();
+      return false;
+    }
+    if (livro.preco === 0) {
+      setErr("O preço tem de ser maior que zero");
+      handleOpen();
+      return false;
+    }
+    if (selAutores.length === 0) {
+      setErr("Associe pelo menos um autor");
+      handleOpen();
+      return false;
+    }
+    return true;
   }
 
   return (
@@ -271,7 +331,7 @@ export default function Livros({ theme, user, API_URL }) {
                 renderValue={(selected) => (
                   <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
                     {selected.map((obj) => (
-                      <Chip key={obj} label={obj} />
+                      <Chip key={obj} label={autores[parseInt(obj) - 1].nome} />
                     ))}
                   </Box>
                 )}
@@ -329,16 +389,19 @@ export default function Livros({ theme, user, API_URL }) {
 
           <Grid item xs={6}>
             <FormControl fullWidth>
-              <TextField
-                label="Sinopse"
-                value={livro.sinopse}
-                onChange={(e) => {
-                  setLivro({ ...livro, sinopse: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
+              <Tooltip title="máximo de 1000 caracteres">
+                <TextField
+                  label="Sinopse"
+                  value={livro.sinopse}
+                  onChange={(e) => {
+                    setLivro({ ...livro, sinopse: e.target.value });
+                  }}
+                  style={{ backgroundColor: "white" }}
+                  type="text"
+                  required
+                  inputProps={{ maxLength: 1000 }}
+                />
+              </Tooltip>
             </FormControl>
           </Grid>
           <Grid item xs={2}>
