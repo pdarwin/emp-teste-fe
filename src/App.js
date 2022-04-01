@@ -10,12 +10,16 @@ import { indigo, orange } from "@mui/material/colors";
 import { Registo } from "./Componentes/Registo";
 import Clientes from "./Componentes/Admin/Clientes";
 import Livros from "./Componentes/Admin/Livros";
+import { InfoLivro } from "./Componentes/Loja/InfoLivro";
 
 function App() {
   const [user, setUser] = useState({
     nome: "",
     username: "",
     staff: false,
+  });
+  const [carrinho, setCarrinho] = useState({
+    livros: [],
   });
 
   const API_URL = "http://localhost:8080";
@@ -71,7 +75,13 @@ function App() {
           ></Route>
           <Route
             path="/livros/:id"
-            element={<Livros theme={myTheme} API_URL={API_URL} />}
+            element={
+              <InfoLivro
+                theme={myTheme}
+                carrinho={carrinho}
+                API_URL={API_URL}
+              />
+            }
           ></Route>
           <Route
             path="/autores"
