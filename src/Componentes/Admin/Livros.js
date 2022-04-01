@@ -9,7 +9,6 @@ import {
   Grid,
   InputAdornment,
   InputLabel,
-  ListItemText,
   MenuItem,
   Modal,
   OutlinedInput,
@@ -24,10 +23,10 @@ import { indigo } from "@mui/material/colors";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { styled } from "@mui/system";
-import { set } from "date-fns";
 
 const columns = [
   { field: "titulo", headerName: "Título", width: 200 },
+  { field: "sinopse", headerName: "Sinopse", width: 200 },
   { field: "preco", headerName: "Preço", width: 200 },
   {
     field: "ativo",
@@ -58,6 +57,7 @@ export default function Livros({ theme, user, API_URL }) {
     edicao: "",
     imagem_capa: "",
     preco: 0,
+    stock: 0,
     autores: [],
   });
 
@@ -155,6 +155,7 @@ export default function Livros({ theme, user, API_URL }) {
           edicao: livro.edicao,
           imagem_capa: livro.imagem_capa,
           preco: livro.preco,
+          stock: livro.stock,
           autores: livro.autores,
           ativo: true,
         }),
@@ -183,6 +184,7 @@ export default function Livros({ theme, user, API_URL }) {
               edicao: "",
               imagem_capa: "",
               preco: 0,
+              stock: 0,
               autores: [],
             });
             setErr("Registo bem sucedido");
@@ -241,13 +243,18 @@ export default function Livros({ theme, user, API_URL }) {
       handleOpen();
       return false;
     }
-    if (livro.num_paginas === 0) {
+    if (livro.num_paginas <= 0) {
       setErr("O número de páginas tem de ser maior que zero");
       handleOpen();
       return false;
     }
-    if (livro.preco === 0) {
+    if (livro.preco <= 0) {
       setErr("O preço tem de ser maior que zero");
+      handleOpen();
+      return false;
+    }
+    if (livro.stock < 0) {
+      setErr("O stock não pode ser menor que zero");
       handleOpen();
       return false;
     }
@@ -386,7 +393,6 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
-
           <Grid item xs={6}>
             <FormControl fullWidth>
               <Tooltip title="máximo de 1000 caracteres">
@@ -418,7 +424,7 @@ export default function Livros({ theme, user, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={9}>
+          <Grid item xs={8}>
             <label htmlFor="contained-button-file">
               <Input
                 accept="image/*"
@@ -437,21 +443,38 @@ export default function Livros({ theme, user, API_URL }) {
               </Button>
             </label>
           </Grid>
+          <Grid item xs={1}>
+            <FormControl fullWidth>
+              <TextField
+                label="Stock"
+                value={livro.stock}
+                onChange={(e) => {
+                  setLivro({ ...livro, stock: e.target.value });
+                }}
+                style={{ backgroundColor: "white" }}
+                type="number"
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              />
+            </FormControl>
+          </Grid>
           <Grid item xs={3}>
-            <InputLabel htmlFor="filled-adornment-amount">Preço</InputLabel>
             <FormControl variant="outlined">
-              <FilledInput
+              <TextField
                 id="filled-adornment-amount"
                 value={livro.preco}
                 onChange={(e) => {
                   setLivro({ ...livro, preco: e.target.value });
                 }}
-                startAdornment={
-                  <InputAdornment position="start">€</InputAdornment>
-                }
+                InputProps={{
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  startAdornment: (
+                    <InputAdornment position="start">€</InputAdornment>
+                  ),
+                }}
                 style={{ backgroundColor: "white" }}
                 type="number"
-                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                label="Preço"
               />
             </FormControl>
           </Grid>

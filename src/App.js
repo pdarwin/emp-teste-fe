@@ -70,6 +70,10 @@ function App() {
             element={<Livros theme={myTheme} API_URL={API_URL} />}
           ></Route>
           <Route
+            path="/livros/:id"
+            element={<Livros theme={myTheme} API_URL={API_URL} />}
+          ></Route>
+          <Route
             path="/autores"
             element={<Autores theme={myTheme} API_URL={API_URL} />}
           ></Route>
