@@ -71,7 +71,7 @@ export function InfoLivro({ theme, shoppingCart, addItem, API_URL }) {
             {livro.titulo}
           </Typography>
           <Typography
-            variant="h6"
+            variant="subtitle2"
             style={{ backgroundColor: indigo[300], color: indigo[50] }}
             align="center"
           >

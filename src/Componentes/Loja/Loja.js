@@ -50,25 +50,23 @@ export default function Loja({ theme, user, API_URL }) {
       </Typography>
 
       <Box style={{ backgroundColor: indigo[900] }}>
-        <ImageList
-          sx={{ width: "100%", height: "100%" }}
-          cols={4}
-          rowHeight={250}
-        >
+        <ImageList sx={{ width: "100%", height: "100%" }} cols={4} gap={8}>
           {livros.map((livro) => (
-            <Link key={livro.id} variant="body2" color={indigo[100]}>
-              <ImageListItem
-                key={livro.id}
-                onClick={() => {
-                  navigate("/livros/" + livro.id);
-                }}
-              >
+            <Link
+              component="button"
+              key={livro.id}
+              variant="body2"
+              color={indigo[100]}
+              onClick={() => {
+                navigate("/livros/" + livro.id);
+              }}
+            >
+              <ImageListItem>
                 <img src={livro.imagem_capa} loading="lazy" />
                 <ImageListItemBar
                   title={livro.titulo}
                   subtitle={<span>preço: {livro.preco}€</span>}
                   position="below"
-                  key={livro.id}
                 />
               </ImageListItem>
             </Link>
