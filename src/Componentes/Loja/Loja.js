@@ -4,6 +4,7 @@ import { AddTask, DoNotDisturbAltOutlined } from "@mui/icons-material";
 import {
   Alert,
   Box,
+  Grid,
   ImageList,
   ImageListItem,
   ImageListItemBar,
@@ -70,8 +71,19 @@ export default function Loja({ theme, addItem, API_URL }) {
         Consulte a nossa montra de livros
       </Typography>
 
-      <Box style={{ backgroundColor: indigo[900] }} sx={{ p: 1 }}>
-        <ImageList sx={{ width: "100%", height: "100%" }} cols={8} gap={9}>
+      <Box
+        style={{ backgroundColor: indigo[900] }}
+        sx={{ p: 1 }}
+        alignItems="center"
+        justifyContent="center"
+        display="flex"
+      >
+        <ImageList
+          sx={{ width: 800, height: 500 }}
+          cols={8}
+          gap={9}
+          rowHeight="200"
+        >
           {livros.map((livro) => (
             <ImageListItem key={livro.id}>
               <img
