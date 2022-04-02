@@ -49,8 +49,8 @@ export default function Loja({ theme, user, API_URL }) {
         Consulte a nossa montra de livros
       </Typography>
 
-      <Box style={{ backgroundColor: indigo[900] }}>
-        <ImageList sx={{ width: "100%", height: "100%" }} cols={4} gap={8}>
+      <Box style={{ backgroundColor: indigo[900] }} sx={{ p: 1 }}>
+        <ImageList sx={{ width: "100%", height: "100%" }} cols={6} gap={9}>
           {livros.map((livro) => (
             <Link
               component="button"
