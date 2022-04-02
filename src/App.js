@@ -126,8 +126,14 @@ function App() {
             element={
               <Login
                 theme={myTheme}
-                user={user}
                 setUser={setUser}
+                modalControls={{
+                  setOpen: setOpen,
+                  setErr: setErr,
+                  setErrLevel: setErrLevel,
+                  handleOpen: handleOpen,
+                  handleClose: handleClose,
+                }}
                 API_URL={API_URL}
               />
             }

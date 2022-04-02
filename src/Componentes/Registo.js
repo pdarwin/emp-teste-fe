@@ -252,17 +252,29 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={2}>
             <Button
-              type="button"
-              size="large"
               variant="contained"
               color="primary"
               className="form__custom-button"
+              size="small"
               onClick={registar}
               sx={{ m: 1 }}
             >
               Registar
+            </Button>
+          </Grid>
+          <Grid item xs={1}>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              onClick={() => {
+                navigate(-1);
+              }}
+              sx={{ m: 1 }}
+            >
+              Voltar
             </Button>
           </Grid>
         </Grid>

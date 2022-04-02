@@ -1,11 +1,12 @@
 import { ThemeProvider } from "@emotion/react";
 import {
-  Alert,
   Button,
   FormControl,
+  FormControlLabel,
+  FormLabel,
   Grid,
-  Link,
-  Modal,
+  Radio,
+  RadioGroup,
   TextField,
   Typography,
 } from "@mui/material";
@@ -13,7 +14,7 @@ import { indigo } from "@mui/material/colors";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function Login({ theme, user, setUser, API_URL }) {
+export function Login({ theme, setUser, modalControls, API_URL }) {
   const [newUser, setNewUser] = useState({
     nome: "",
     email: "",
@@ -21,16 +22,6 @@ export function Login({ theme, user, setUser, API_URL }) {
   });
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-
-  //Gestão do modal
-  const [open, setOpen] = React.useState(false);
-  const [errLevel, setErrLevel] = React.useState("error");
-  const [err, setErr] = React.useState("");
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const doLogin = () => {
     if (validar()) {
@@ -47,18 +38,24 @@ export function Login({ theme, user, setUser, API_URL }) {
         .then((response) => {
           // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
           console.log(response);
-          if (response.status !== 200) {
-            throw new Error(response.status);
-          }
 
           return response.json();
         })
         .then((parsedResponse) => {
-          user.username = newUser.email;
-          user.id = parsedResponse.newID;
-          setErr("Login bem sucedido");
-          setErrLevel("success");
-          handleOpen();
+          if (parsedResponse.statusOK) {
+            setUser({
+              id: parsedResponse.newID,
+              username: newUser.email,
+              staff: newUser.staff,
+            });
+            modalControls.setErr("Login bem sucedido");
+            modalControls.setErrLevel("success");
+            modalControls.handleOpen();
+          } else {
+            modalControls.setErr(parsedResponse.msg);
+            modalControls.setErrLevel("error");
+            modalControls.handleOpen();
+          }
         })
         .catch((error) => {
           alert(error);
@@ -66,15 +63,15 @@ export function Login({ theme, user, setUser, API_URL }) {
     }
   };
   function validar() {
-    setErrLevel("error");
+    modalControls.setErrLevel("error");
     if (newUser.email === "") {
-      setErr("Email não preenchido");
-      handleOpen();
+      modalControls.setErr("Email não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (password === "") {
-      setErr("Password não preenchida");
-      handleOpen();
+      modalControls.setErr("Password não preenchida");
+      modalControls.handleOpen();
       return false;
     }
 
@@ -84,19 +81,6 @@ export function Login({ theme, user, setUser, API_URL }) {
   return (
     <form className="form">
       <ThemeProvider theme={theme}>
-        <div>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            onClick={() => {
-              if (errLevel === "success") navigate("/");
-            }}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Alert severity={errLevel}>{err}</Alert>
-          </Modal>
-        </div>
         <Grid
           container
           rowSpacing={1}
@@ -106,6 +90,7 @@ export function Login({ theme, user, setUser, API_URL }) {
           <Grid item xs={12}>
             <Typography variant="h5">Entrar na aplicação</Typography>
           </Grid>
+
           <Grid item xs={2}>
             <FormControl>
               <TextField
@@ -120,8 +105,7 @@ export function Login({ theme, user, setUser, API_URL }) {
               />
             </FormControl>
           </Grid>
-
-          <Grid item xs={2}>
+          <Grid item xs={3}>
             <FormControl>
               <TextField
                 label="Password"
@@ -135,10 +119,39 @@ export function Login({ theme, user, setUser, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={1} mx={3}>
+          <Grid item xs={7}>
+            <FormControl>
+              <FormLabel id="demo-radio-buttons-group-label">
+                Tipo de utilizador
+              </FormLabel>
+              <RadioGroup
+                row
+                aria-labelledby="demo-radio-buttons-group-label"
+                defaultValue={newUser.staff}
+                name="radio-buttons-group"
+                onChange={(e) => {
+                  setNewUser({ ...newUser, staff: e.target.value });
+                }}
+                value={newUser.staff}
+              >
+                <FormControlLabel
+                  value={false}
+                  control={<Radio />}
+                  label="Cliente"
+                />
+                <FormControlLabel
+                  value={true}
+                  control={<Radio />}
+                  label="Funcionário"
+                />
+              </RadioGroup>
+            </FormControl>
+          </Grid>
+          <Grid item xs={1}>
             <Button
               variant="contained"
               color="primary"
+              size="small"
               onClick={doLogin}
               sx={{ m: 1 }}
             >
@@ -149,6 +162,7 @@ export function Login({ theme, user, setUser, API_URL }) {
             <Button
               variant="contained"
               color="primary"
+              size="small"
               onClick={() => {
                 navigate("/registo");
               }}
@@ -157,7 +171,7 @@ export function Login({ theme, user, setUser, API_URL }) {
               Fazer registo
             </Button>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={1}>
             <Button
               variant="contained"
               color="secondary"
