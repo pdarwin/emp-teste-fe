@@ -9,9 +9,12 @@ import {
 } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Loja({ theme, user, API_URL }) {
   const [livros, setLivros] = React.useState([]);
+
+  const navigate = useNavigate();
 
   React.useEffect(() => {
     getLivros();
@@ -53,13 +56,13 @@ export default function Loja({ theme, user, API_URL }) {
           rowHeight={250}
         >
           {livros.map((livro) => (
-            <Link
-              href={"/livros/" + livro.id}
-              key={livro.id}
-              variant="body2"
-              color={indigo[100]}
-            >
-              <ImageListItem key={livro.id}>
+            <Link key={livro.id} variant="body2" color={indigo[100]}>
+              <ImageListItem
+                key={livro.id}
+                onClick={() => {
+                  navigate("/livros/" + livro.id);
+                }}
+              >
                 <img src={livro.imagem_capa} loading="lazy" />
                 <ImageListItemBar
                   title={livro.titulo}

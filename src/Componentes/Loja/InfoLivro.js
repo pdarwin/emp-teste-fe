@@ -6,7 +6,6 @@ import {
   Typography,
 } from "@mui/material";
 import { indigo } from "@mui/material/colors";
-import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -31,10 +30,10 @@ export function InfoLivro({ theme, shoppingCart, addItem, API_URL }) {
       alert("Este livro não existe na base de dados");
       return;
     }
-    getLivro();
+    getLivroById();
   }, []);
 
-  function getLivro() {
+  function getLivroById() {
     fetch(API_URL + "/getLivroById/" + params.id, {
       headers: { "Content-type": "application/json" },
     })
@@ -54,7 +53,7 @@ export function InfoLivro({ theme, shoppingCart, addItem, API_URL }) {
         alert(error);
       });
   }
-  //teste
+
   return livro !== {} ? (
     <ThemeProvider theme={theme}>
       <Grid
@@ -70,6 +69,13 @@ export function InfoLivro({ theme, shoppingCart, addItem, API_URL }) {
             align="center"
           >
             {livro.titulo}
+          </Typography>
+          <Typography
+            variant="h6"
+            style={{ backgroundColor: indigo[300], color: indigo[50] }}
+            align="center"
+          >
+            {livro.autores.map(({ nome }) => nome).join(", ")}
           </Typography>
         </Grid>
         <Grid item xs={6}>
