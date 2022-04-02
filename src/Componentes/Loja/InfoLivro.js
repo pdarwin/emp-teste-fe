@@ -10,7 +10,7 @@ import { indigo, red } from "@mui/material/colors";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export function InfoLivro({ theme, addItem, API_URL }) {
+export function InfoLivro({ theme, user, addItem, API_URL }) {
   const params = useParams();
   const [livro, setLivro] = useState({
     titulo: "",
@@ -124,30 +124,34 @@ export function InfoLivro({ theme, addItem, API_URL }) {
             Voltar
           </Button>
         </Grid>
-        <Grid item xs={6}>
-          {livro.stock > 0 ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                addItem(livro);
-              }}
-            >
-              Adicionar ao carrinho: {livro.preco}€
-            </Button>
-          ) : (
-            <Grid container>
-              <Grid>
-                <DoNotDisturbAltOutlined sx={{ color: red[400] }} />
+        {user.id != "" ? (
+          <Grid item xs={6}>
+            {livro.stock > 0 ? (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  addItem(livro);
+                }}
+              >
+                Adicionar ao carrinho: {livro.preco}€
+              </Button>
+            ) : (
+              <Grid container>
+                <Grid>
+                  <DoNotDisturbAltOutlined sx={{ color: red[400] }} />
+                </Grid>
+                <Grid>
+                  <Typography variant="h5" color={red[400]} mx={2}>
+                    Produto esgotado
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid>
-                <Typography variant="h5" color={red[400]} mx={2}>
-                  Produto esgotado
-                </Typography>
-              </Grid>
-            </Grid>
-          )}
-        </Grid>
+            )}
+          </Grid>
+        ) : (
+          ""
+        )}
       </Grid>
     </ThemeProvider>
   ) : (
