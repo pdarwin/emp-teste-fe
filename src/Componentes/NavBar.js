@@ -12,7 +12,14 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { Badge, Paper, Popover, ThemeProvider } from "@mui/material";
+import {
+  Alert,
+  Badge,
+  Modal,
+  Paper,
+  Popover,
+  ThemeProvider,
+} from "@mui/material";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import Menu from "@mui/material/Menu";
 import { indigo } from "@mui/material/colors";
@@ -32,10 +39,20 @@ const menuadmin = [
   { name: "Gestão de funcionários", link: "/staff" },
 ];
 
-function NavBar({ theme, user, setUser, shoppingCart, cartControls }) {
+function NavBar({ theme, user, setUser, shoppingCart, cartControls, API_URL }) {
   const [anchor, setAnchor] = React.useState(null);
 
   const navigate = useNavigate();
+
+  //Gestão do modal
+  const [open, setOpen] = React.useState(false);
+  const [errLevel, setErrLevel] = React.useState("error");
+  const [err, setErr] = React.useState("");
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   function calculateSum() {
     let total = 0.0;
@@ -50,7 +67,52 @@ function NavBar({ theme, user, setUser, shoppingCart, cartControls }) {
     return Math.round(total * 100) / 100;
   }
 
-  function pagar() {}
+  function pagar() {
+    const total = calculateSum();
+
+    fetch(API_URL + "/addCompra/" + user.id, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify({
+        valor: total,
+      }),
+    })
+      .then((response) => {
+        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+        console.log(response);
+        /*           if (response.status !== 200) {
+          throw new Error(response.status.toString);
+        } */
+
+        return response.json();
+      })
+      .then((parsedResponse) => {
+        if (parsedResponse.statusOk) {
+          setErr(
+            "Compra no valor de " +
+              total +
+              "€ efetuada com sucesso." +
+              (total >= 50
+                ? "Ganhou um cupão de " +
+                  (total < 100 ? 5 : 15) +
+                  "% de desconto"
+                : "")
+          );
+          setErrLevel("success");
+          handleOpen();
+          shoppingCart = null;
+        } else {
+          setErr(parsedResponse.msg);
+          setErrLevel("error");
+          handleOpen();
+        }
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
 
   return (
     <ThemeProvider theme={theme}>
@@ -268,6 +330,14 @@ function NavBar({ theme, user, setUser, shoppingCart, cartControls }) {
           </Toolbar>
         </Container>
       </AppBar>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Alert severity={errLevel}>{err}</Alert>
+      </Modal>
     </ThemeProvider>
   );
 }

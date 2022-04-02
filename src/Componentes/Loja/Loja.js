@@ -71,7 +71,7 @@ export default function Loja({ theme, addItem, API_URL }) {
       </Typography>
 
       <Box style={{ backgroundColor: indigo[900] }} sx={{ p: 1 }}>
-        <ImageList sx={{ width: "100%", height: "100%" }} cols={6} gap={9}>
+        <ImageList sx={{ width: "100%", height: "100%" }} cols={8} gap={9}>
           {livros.map((livro) => (
             <ImageListItem key={livro.id}>
               <img
@@ -88,7 +88,7 @@ export default function Loja({ theme, addItem, API_URL }) {
                   <span>
                     preço: {livro.preco}€{" "}
                     {livro.stock > 0 ? (
-                      <Tooltip title="em stock, clique para adicionar ao carrinho de compras">
+                      <Tooltip title="Em stock, clique para adicionar ao carrinho de compras">
                         <AddTask
                           sx={{ color: green[300] }}
                           onClick={() => {

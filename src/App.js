@@ -14,7 +14,7 @@ import { InfoLivro } from "./Componentes/Loja/InfoLivro";
 
 function App() {
   const [user, setUser] = useState({
-    nome: "",
+    id: "",
     username: "",
     staff: false,
   });
@@ -85,6 +85,7 @@ function App() {
             increaseQuantity: addQuantity,
             decreaseQuantity: removeQuanitty,
           }}
+          API_URL={API_URL}
         />
         <Routes>
           <Route

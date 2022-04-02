@@ -34,7 +34,7 @@ export function Login({ theme, user, setUser, API_URL }) {
 
   const logar = () => {
     if (validar()) {
-      fetch(API_URL + "/validateCliente", {
+      fetch(API_URL + "/loginCliente", {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -54,12 +54,8 @@ export function Login({ theme, user, setUser, API_URL }) {
           return response.json();
         })
         .then((parsedResponse) => {
-          setUser({
-            ...user,
-            username: newUser.email,
-            nome: newUser.nome,
-            staff: newUser.staff,
-          });
+          user.username = newUser.email;
+          user.id = parsedResponse.newID;
           setErr("Login bem sucedido");
           setErrLevel("success");
           handleOpen();
