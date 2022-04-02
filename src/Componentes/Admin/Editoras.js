@@ -13,13 +13,13 @@ import { DataGrid } from "@mui/x-data-grid";
 import { indigo } from "@mui/material/colors";
 
 const columns = [
-  { field: "nome", headerName: "Nome", width: 200 },
-  { field: "morada", headerName: "Morada", width: 200 },
+  { field: "nome", headerName: "Nome", width: 250 },
+  { field: "morada", headerName: "Morada", width: 650 },
   {
     field: "ativo",
     headerName: "Ativo",
     type: "boolean",
-    width: 5,
+    width: 150,
     editable: true,
   },
 ];
