@@ -9,7 +9,7 @@ import { indigo } from "@mui/material/colors";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export function InfoLivro({ theme, shoppingCart, addItem, API_URL }) {
+export function InfoLivro({ theme, addItem, API_URL }) {
   const params = useParams();
   const [livro, setLivro] = useState({
     titulo: "",

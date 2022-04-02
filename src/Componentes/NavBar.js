@@ -50,6 +50,8 @@ function NavBar({ theme, user, setUser, shoppingCart, cartControls }) {
     return Math.round(total * 100) / 100;
   }
 
+  function pagar() {}
+
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="static">
@@ -173,10 +175,10 @@ function NavBar({ theme, user, setUser, shoppingCart, cartControls }) {
                           }}
                         >
                           <Typography variant="p">
-                            Name: {e.item.name}
+                            Título: {e.item.titulo}
                           </Typography>
                           <Typography variant="p">
-                            Quantity: {e.quantity}
+                            Quantidade: {e.quantity}
                           </Typography>
                         </Box>
                         <Box
@@ -213,12 +215,18 @@ function NavBar({ theme, user, setUser, shoppingCart, cartControls }) {
                       justifyContent: "space-evenly",
                     }}
                   >
-                    <Typography>Total = {calculateSum()}€ </Typography>
-                    <PaymentIcon
-                      onClick={() => {
-                        alert("Pagar");
-                      }}
-                    />
+                    <Tooltip title="Pagar">
+                      <IconButton
+                        onClick={() => {
+                          pagar();
+                        }}
+                      >
+                        <Typography variant="body1" mx={1}>
+                          Total = {calculateSum()}€
+                        </Typography>
+                        <PaymentIcon />
+                      </IconButton>
+                    </Tooltip>
                   </Box>
                 </Box>
               </Popover>

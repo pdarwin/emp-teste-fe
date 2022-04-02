@@ -90,12 +90,7 @@ function App() {
           <Route
             path="/"
             element={
-              <Loja
-                theme={myTheme}
-                user={user}
-                setUser={setUser}
-                API_URL={API_URL}
-              />
+              <Loja theme={myTheme} addItem={addQuantity} API_URL={API_URL} />
             }
           ></Route>
           <Route path="/contactos"></Route>
@@ -125,7 +120,6 @@ function App() {
             element={
               <InfoLivro
                 theme={myTheme}
-                shoppingCart={shoppingCart}
                 addItem={addQuantity}
                 API_URL={API_URL}
               />

@@ -1,17 +1,20 @@
 import { ThemeProvider } from "@emotion/react";
+import { Tooltip } from "@material-ui/core";
+import { AddTask, DoNotDisturbAltOutlined } from "@mui/icons-material";
 import {
+  Alert,
   Box,
   ImageList,
   ImageListItem,
   ImageListItemBar,
-  Link,
+  Modal,
   Typography,
 } from "@mui/material";
-import { indigo } from "@mui/material/colors";
+import { green, indigo, red } from "@mui/material/colors";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Loja({ theme, user, API_URL }) {
+export default function Loja({ theme, addItem, API_URL }) {
   const [livros, setLivros] = React.useState([]);
 
   const navigate = useNavigate();
@@ -19,6 +22,16 @@ export default function Loja({ theme, user, API_URL }) {
   React.useEffect(() => {
     getLivros();
   }, []);
+
+  //Gestão do modal
+  const [open, setOpen] = React.useState(false);
+  const [errLevel, setErrLevel] = React.useState("error");
+  const [err, setErr] = React.useState("");
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   function getLivros() {
     fetch(API_URL + "/getLivros", {
@@ -42,6 +55,14 @@ export default function Loja({ theme, user, API_URL }) {
   }
   return (
     <ThemeProvider theme={theme}>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Alert severity={errLevel}>{err}</Alert>
+      </Modal>
       <Typography variant="h4" my={4} align="center" color="primary">
         Bem vindo à Livraria Requalificar
       </Typography>
@@ -52,24 +73,47 @@ export default function Loja({ theme, user, API_URL }) {
       <Box style={{ backgroundColor: indigo[900] }} sx={{ p: 1 }}>
         <ImageList sx={{ width: "100%", height: "100%" }} cols={6} gap={9}>
           {livros.map((livro) => (
-            <Link
-              component="button"
-              key={livro.id}
-              variant="body2"
-              color={indigo[100]}
-              onClick={() => {
-                navigate("/livros/" + livro.id);
-              }}
-            >
-              <ImageListItem>
-                <img src={livro.imagem_capa} loading="lazy" />
-                <ImageListItemBar
-                  title={livro.titulo}
-                  subtitle={<span>preço: {livro.preco}€</span>}
-                  position="below"
-                />
-              </ImageListItem>
-            </Link>
+            <ImageListItem key={livro.id}>
+              <img
+                src={livro.imagem_capa}
+                loading="lazy"
+                onClick={() => {
+                  navigate("/livros/" + livro.id);
+                }}
+                style={{ cursor: "pointer" }}
+              />
+              <ImageListItemBar
+                title={livro.titulo}
+                subtitle={
+                  <span>
+                    preço: {livro.preco}€{" "}
+                    {livro.stock > 0 ? (
+                      <Tooltip title="em stock, clique para adicionar ao carrinho de compras">
+                        <AddTask
+                          sx={{ color: green[300] }}
+                          onClick={() => {
+                            addItem(livro);
+                            setErr(
+                              livro.titulo +
+                                " adicionado ao carrinho de compras"
+                            );
+                            setErrLevel("success");
+                            handleOpen();
+                          }}
+                          style={{ cursor: "pointer" }}
+                        />
+                      </Tooltip>
+                    ) : (
+                      <Tooltip title="esgotado">
+                        <DoNotDisturbAltOutlined sx={{ color: red[400] }} />
+                      </Tooltip>
+                    )}
+                  </span>
+                }
+                position="below"
+                sx={{ color: indigo[100] }}
+              />
+            </ImageListItem>
           ))}
         </ImageList>
       </Box>
