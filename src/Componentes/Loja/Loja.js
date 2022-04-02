@@ -82,7 +82,7 @@ export default function Loja({ theme, addItem, API_URL }) {
           sx={{ width: 800, height: 500 }}
           cols={8}
           gap={9}
-          rowHeight="200"
+          rowHeight={30}
         >
           {livros.map((livro) => (
             <ImageListItem key={livro.id}>
@@ -106,8 +106,9 @@ export default function Loja({ theme, addItem, API_URL }) {
                           onClick={() => {
                             addItem(livro);
                             setErr(
-                              livro.titulo +
-                                " adicionado ao carrinho de compras"
+                              "Adicionou o livro " +
+                                livro.titulo +
+                                " ao carrinho de compras."
                             );
                             setErrLevel("success");
                             handleOpen();

@@ -1,3 +1,4 @@
+import { DoNotDisturbAltOutlined } from "@mui/icons-material";
 import {
   Button,
   Grid,
@@ -5,7 +6,7 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { indigo } from "@mui/material/colors";
+import { indigo, red } from "@mui/material/colors";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -118,20 +119,34 @@ export function InfoLivro({ theme, addItem, API_URL }) {
             onClick={() => {
               navigate(-1);
             }}
+            size="small"
           >
             Voltar
           </Button>
         </Grid>
         <Grid item xs={6}>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              addItem(livro);
-            }}
-          >
-            Adicionar ao carrinho: {livro.preco}€
-          </Button>
+          {livro.stock > 0 ? (
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                addItem(livro);
+              }}
+            >
+              Adicionar ao carrinho: {livro.preco}€
+            </Button>
+          ) : (
+            <Grid container>
+              <Grid>
+                <DoNotDisturbAltOutlined sx={{ color: red[400] }} />
+              </Grid>
+              <Grid>
+                <Typography variant="h5" color={red[400]} mx={2}>
+                  Produto esgotado
+                </Typography>
+              </Grid>
+            </Grid>
+          )}
         </Grid>
       </Grid>
     </ThemeProvider>

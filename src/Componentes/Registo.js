@@ -19,28 +19,17 @@ import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DatePicker from "@mui/lab/DatePicker";
 
-export function Registo({ theme, user, setUser, API_URL }) {
+export function Registo({ theme, setUser, modalControls, API_URL }) {
   const [newUser, setNewUser] = useState({
     nome: "",
     email: "",
     morada: "",
     data_nascimento: null,
-    password: "",
     ativo: true,
     staff: false,
   });
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
-
-  //Gestão do modal
-  const [open, setOpen] = React.useState(false);
-  const [errLevel, setErrLevel] = React.useState("error");
-  const [err, setErr] = React.useState("");
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   //regexp de validação do email
   const validEmail = new RegExp("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
@@ -50,7 +39,7 @@ export function Registo({ theme, user, setUser, API_URL }) {
   const navigate = useNavigate();
 
   function registar() {
-    if (valida()) {
+    if (validar()) {
       fetch(API_URL + "/addCliente", {
         method: "POST",
         headers: {
@@ -68,22 +57,24 @@ export function Registo({ theme, user, setUser, API_URL }) {
         .then((response) => {
           // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
           console.log(response);
-          if (response.status !== 200) {
-            throw new Error(response.status.toString);
-          }
 
           return response.json();
         })
         .then((parsedResponse) => {
-          setUser({
-            ...user,
-            nome: newUser.nome,
-            username: newUser.email,
-            staff: newUser.staff,
-          });
-          setErr("Registo bem sucedido");
-          setErrLevel("success");
-          handleOpen();
+          if (parsedResponse.statusOK) {
+            setUser({
+              nome: newUser.nome,
+              username: newUser.email,
+              staff: newUser.staff,
+            });
+            modalControls.setErr("Registo efetuado com sucesso");
+            modalControls.setErrLevel("success");
+            modalControls.handleOpen();
+          } else {
+            modalControls.setErr(parsedResponse.msg);
+            modalControls.setErrLevel("error");
+            modalControls.handleOpen();
+          }
         })
         .catch((error) => {
           alert(error);
@@ -91,47 +82,48 @@ export function Registo({ theme, user, setUser, API_URL }) {
     }
   }
 
-  function valida() {
+  function validar() {
+    modalControls.setErrLevel("error");
     if (newUser.nome === "") {
-      setErr("Nome não preenchido");
-      handleOpen();
+      modalControls.setErr("Nome não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (newUser.email === "") {
-      setErr("Email não preenchido");
-      handleOpen();
+      modalControls.setErr("Email não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (!validEmail.test(newUser.email)) {
-      setErr("Email inválido");
-      handleOpen();
+      modalControls.setErr("Email inválido");
+      modalControls.handleOpen();
       return false;
     }
     if (newUser.morada === "") {
-      setErr("Morada não preenchida");
-      handleOpen();
+      modalControls.setErr("Morada não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     if (password === "") {
-      setErr("Password não preenchida");
-      handleOpen();
+      modalControls.setErr("Password não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     if (newUser.data_nascimento === null) {
-      setErr("Data de nascimento não preenchida");
-      handleOpen();
+      modalControls.setErr("Data de nascimento não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     if (password !== password2) {
-      setErr("As passwords não coincidem");
-      handleOpen();
+      modalControls.setErr("As passwords não coincidem");
+      modalControls.handleOpen();
       return false;
     }
     if (!validPassword.test(password)) {
-      setErr(
+      modalControls.setErr(
         "A password tem de conter pelo menos uma letra minúscula, uma maiúscula, um dígito, e 8 a 20 caracteres"
       );
-      handleOpen();
+      modalControls.handleOpen();
       return false;
     }
     return true;
@@ -140,19 +132,6 @@ export function Registo({ theme, user, setUser, API_URL }) {
   return (
     <form className="form">
       <ThemeProvider theme={theme}>
-        <div>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            onClick={() => {
-              if (errLevel === "success") navigate("/");
-            }}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Alert severity={errLevel}>{err}</Alert>
-          </Modal>
-        </div>
         <Grid
           container
           rowSpacing={1}
@@ -196,10 +175,10 @@ export function Registo({ theme, user, setUser, API_URL }) {
               <RadioGroup
                 row
                 aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue={false}
+                defaultValue={newUser.staff}
                 name="radio-buttons-group"
                 onChange={(e) => {
-                  setNewUser({ ...newUser, staff: false });
+                  setNewUser({ ...newUser, staff: e.target.value });
                 }}
                 value={newUser.staff}
               >

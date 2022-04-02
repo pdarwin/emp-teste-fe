@@ -11,14 +11,15 @@ import { Registo } from "./Componentes/Registo";
 import Clientes from "./Componentes/Admin/Clientes";
 import Livros from "./Componentes/Admin/Livros";
 import { InfoLivro } from "./Componentes/Loja/InfoLivro";
+import MyModal from "./Componentes/MyModal";
 
 function App() {
   const [user, setUser] = useState({
     id: "",
     username: "",
     staff: false,
+    shoppingCart: [],
   });
-  const [shoppingCart, setShoppingCart] = useState([]);
 
   const API_URL = "http://localhost:8080";
 
@@ -29,12 +30,23 @@ function App() {
     },
   });
 
+  //Gestão do MyModal
+  const [open, setOpen] = useState(false);
+  const [errLevel, setErrLevel] = useState("error");
+  const [err, setErr] = useState("");
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
     document.title = "Livraria Requalificar";
   }, []);
 
   function addQuantity(item) {
-    let oldShoppingCart = shoppingCart;
+    let oldShoppingCart = user.shoppingCart;
 
     //verificar se um item já existe
     if (oldShoppingCart.some((e) => e.item.id === item.id)) {
@@ -52,11 +64,11 @@ function App() {
       oldShoppingCart = [myItem, ...oldShoppingCart];
     }
 
-    setShoppingCart(oldShoppingCart);
+    setUser({ ...user, shoppingCart: oldShoppingCart });
   }
 
   function removeQuanitty(item) {
-    let oldShoppingCart = shoppingCart;
+    let oldShoppingCart = user.shoppingCart;
 
     //verificar se um item já existe
     if (oldShoppingCart.some((e) => e.item.id === item.id)) {
@@ -69,21 +81,35 @@ function App() {
 
       oldShoppingCart = oldShoppingCart.filter((e) => e.quantity > 0);
 
-      setShoppingCart(oldShoppingCart);
+      setUser({ ...user, shoppingCart: oldShoppingCart });
     }
   }
 
   return (
     <div className="App">
       <BrowserRouter>
+        <MyModal
+          open={open}
+          err={err}
+          errLevel={errLevel}
+          handleOpen={handleOpen}
+          handleClose={handleClose}
+        />
         <NavBar
           theme={myTheme}
           user={user}
           setUser={setUser}
-          shoppingCart={shoppingCart}
+          shoppingCart={user.shoppingCart}
           cartControls={{
             increaseQuantity: addQuantity,
             decreaseQuantity: removeQuanitty,
+          }}
+          modalControls={{
+            setOpen: setOpen,
+            setErr: setErr,
+            setErrLevel: setErrLevel,
+            handleOpen: handleOpen,
+            handleClose: handleClose,
           }}
           API_URL={API_URL}
         />
@@ -109,7 +135,18 @@ function App() {
           <Route
             path="/registo"
             element={
-              <Registo theme={myTheme} setUser={setUser} API_URL={API_URL} />
+              <Registo
+                theme={myTheme}
+                setUser={setUser}
+                modalControls={{
+                  setOpen: setOpen,
+                  setErr: setErr,
+                  setErrLevel: setErrLevel,
+                  handleOpen: handleOpen,
+                  handleClose: handleClose,
+                }}
+                API_URL={API_URL}
+              />
             }
           ></Route>
           <Route

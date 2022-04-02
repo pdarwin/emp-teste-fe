@@ -32,7 +32,7 @@ export function Login({ theme, user, setUser, API_URL }) {
     setOpen(false);
   };
 
-  const logar = () => {
+  const doLogin = () => {
     if (validar()) {
       fetch(API_URL + "/loginCliente", {
         method: "POST",
@@ -66,6 +66,7 @@ export function Login({ theme, user, setUser, API_URL }) {
     }
   };
   function validar() {
+    setErrLevel("error");
     if (newUser.email === "") {
       setErr("Email não preenchido");
       handleOpen();
@@ -120,7 +121,7 @@ export function Login({ theme, user, setUser, API_URL }) {
             </FormControl>
           </Grid>
 
-          <Grid item xs={3}>
+          <Grid item xs={2}>
             <FormControl>
               <TextField
                 label="Password"
@@ -134,24 +135,40 @@ export function Login({ theme, user, setUser, API_URL }) {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={1} mx={3}>
             <Button
-              type="button"
-              size="large"
               variant="contained"
               color="primary"
-              className="form__custom-button"
-              onClick={logar}
+              onClick={doLogin}
               sx={{ m: 1 }}
             >
               Entrar
             </Button>
           </Grid>
+          <Grid item xs={2}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                navigate("/registo");
+              }}
+              sx={{ m: 1 }}
+            >
+              Fazer registo
+            </Button>
+          </Grid>
           <Grid item xs={12}>
-            <Typography variant="h6" my={6}>
-              Se ainda não está registado, pode fazer{" "}
-              <Link href="/registo">aqui</Link> o seu registo.
-            </Typography>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              onClick={() => {
+                navigate(-1);
+              }}
+              sx={{ m: 1 }}
+            >
+              Voltar
+            </Button>
           </Grid>
         </Grid>
       </ThemeProvider>
