@@ -158,41 +158,49 @@ function App() {
           <Route
             path="/login"
             element={
-              <Login
-                theme={myTheme}
-                setUser={setUser}
-                modalControls={{
-                  setOpen: setOpen,
-                  setErr: setErr,
-                  setErrLevel: setErrLevel,
-                  handleOpen: handleOpen,
-                  handleClose: handleClose,
-                }}
-                API_URL={API_URL}
-              />
+              <VerificaNoUser user={user}>
+                <Login
+                  theme={myTheme}
+                  setUser={setUser}
+                  modalControls={{
+                    setOpen: setOpen,
+                    setErr: setErr,
+                    setErrLevel: setErrLevel,
+                    handleOpen: handleOpen,
+                    handleClose: handleClose,
+                  }}
+                  API_URL={API_URL}
+                />
+              </VerificaNoUser>
             }
           ></Route>
           <Route
             path="/registo"
             element={
-              <Registo
-                theme={myTheme}
-                user={user}
-                setUser={setUser}
-                modalControls={{
-                  setOpen: setOpen,
-                  setErr: setErr,
-                  setErrLevel: setErrLevel,
-                  handleOpen: handleOpen,
-                  handleClose: handleClose,
-                }}
-                API_URL={API_URL}
-              />
+              <VerificaNoUser user={user}>
+                <Registo
+                  theme={myTheme}
+                  user={user}
+                  setUser={setUser}
+                  modalControls={{
+                    setOpen: setOpen,
+                    setErr: setErr,
+                    setErrLevel: setErrLevel,
+                    handleOpen: handleOpen,
+                    handleClose: handleClose,
+                  }}
+                  API_URL={API_URL}
+                />
+              </VerificaNoUser>
             }
           ></Route>
           <Route
             path="/livros"
-            element={<Livros theme={myTheme} API_URL={API_URL} />}
+            element={
+              <VerificaStaff>
+                <Livros theme={myTheme} API_URL={API_URL} />
+              </VerificaStaff>
+            }
           ></Route>
           <Route
             path="/livros/:id"
@@ -207,62 +215,45 @@ function App() {
           ></Route>
           <Route
             path="/autores"
-            element={<Autores theme={myTheme} API_URL={API_URL} />}
+            element={
+              <VerificaStaff user={user}>
+                <Autores theme={myTheme} API_URL={API_URL} />
+              </VerificaStaff>
+            }
           ></Route>
           <Route
             path="/editoras"
-            element={<Editoras theme={myTheme} API_URL={API_URL} />}
+            element={
+              <VerificaStaff user={user}>
+                {" "}
+                <Editoras theme={myTheme} API_URL={API_URL} />
+              </VerificaStaff>
+            }
           ></Route>
           <Route
             path="/clientes"
-            element={<Clientes theme={myTheme} API_URL={API_URL} />}
+            element={
+              <VerificaStaff user={user}>
+                <Clientes theme={myTheme} API_URL={API_URL} />
+              </VerificaStaff>
+            }
           ></Route>
           <Route path="/staff"></Route>
         </Routes>
       </BrowserRouter>
-      {/*      <Header />
-      <BrowserRouter>
-        {user && <NavBar value={user} />}
-        <Routes>
-          <Route
-            path="/home"
-            element={
-              <VerificaUser user={user}>
-                <HomePage />
-              </VerificaUser>
-            }
-          ></Route>
-          <Route
-            path="/contacts/:id"
-            element={
-              <VerificaUser user={user}>
-                <Contacts />
-              </VerificaUser>
-            }
-          ></Route>
-          <Route
-            path="/menu"
-            element={
-              <VerificaUser user={user}>
-                <Menu />
-              </VerificaUser>
-            }
-          ></Route>
-          <Route path="/*" element={<UserBar doLogin={setUser} />}></Route>
-        </Routes>
-      </BrowserRouter>
-      <Table /> */}
     </div>
   );
 }
 
-function VerificaUser({ user, children }) {
-  if (user.id == "") {
+// Verifica se não está logado
+function VerificaNoUser({ user, children }) {
+  if (user.username != "") {
     return <Navigate to="/" replace={true} />;
   }
   return children;
 }
 
+// Verifica se é staff
 function VerificaStaff({ user, children }) {
   if (!user.staff) {
     return <Navigate to="/" replace={true} />;
