@@ -14,13 +14,13 @@ import {
   Typography,
 } from "@mui/material";
 import { indigo } from "@mui/material/colors";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import LocalizationProvider from "@mui/lab/LocalizationProvider";
 import DatePicker from "@mui/lab/DatePicker";
 
-export function Registo({ theme, setUser, modalControls, API_URL }) {
+export function Registo({ theme, user, setUser, modalControls, API_URL }) {
   const [newUser, setNewUser] = useState({
     nome: "",
     email: "",
@@ -31,6 +31,10 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
   });
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
+
+  useEffect(() => {
+    setStaff(user.staff);
+  }, []);
 
   //regexp de validação do email
   const validEmail = new RegExp("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
@@ -49,7 +53,7 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
   function registar() {
     console.log(newUser);
     if (validar()) {
-      fetch(API_URL + "/add" + (!staff ? "Cliente" : "Funcionario"), {
+      fetch(API_URL + "/add" + (staff ? "Funcionario" : "Cliente"), {
         method: "POST",
         headers: {
           "Content-type": "application/json",

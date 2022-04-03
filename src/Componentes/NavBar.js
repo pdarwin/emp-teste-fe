@@ -79,27 +79,31 @@ export default function NavBar({
                   {page.name}
                 </Button>
               ))}
-              <PopupState variant="popover" popupId="demo-popup-menu">
-                {(popupState) => (
-                  <React.Fragment>
-                    <Button variant="" {...bindTrigger(popupState)}>
-                      Administração
-                    </Button>
-                    <Menu {...bindMenu(popupState)}>
-                      {menuadmin.map((page) => (
-                        <MenuItem
-                          key={page.name}
-                          onClick={() => {
-                            navigate(page.link);
-                          }}
-                        >
-                          {page.name}
-                        </MenuItem>
-                      ))}
-                    </Menu>
-                  </React.Fragment>
-                )}
-              </PopupState>
+              {user.staff ? (
+                <PopupState variant="popover" popupId="demo-popup-menu">
+                  {(popupState) => (
+                    <React.Fragment>
+                      <Button variant="" {...bindTrigger(popupState)}>
+                        Administração
+                      </Button>
+                      <Menu {...bindMenu(popupState)}>
+                        {menuadmin.map((page) => (
+                          <MenuItem
+                            key={page.name}
+                            onClick={() => {
+                              navigate(page.link);
+                            }}
+                          >
+                            {page.name}
+                          </MenuItem>
+                        ))}
+                      </Menu>
+                    </React.Fragment>
+                  )}
+                </PopupState>
+              ) : (
+                ""
+              )}
             </Box>
             {user.id != "" && !user.staff ? (
               <MyShoppingCart

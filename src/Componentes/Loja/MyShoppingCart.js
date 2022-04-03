@@ -54,8 +54,8 @@ export default function MyShoppingCart({
         return response.json();
       })
       .then((parsedResponse) => {
-        console.log(parsedResponse);
         if (parsedResponse.statusOk) {
+          modalControls.setErr("");
           modalControls.setErr(
             "Compra no valor de " +
               total +

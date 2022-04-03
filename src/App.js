@@ -1,4 +1,10 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+} from "react-router-dom";
 import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
 import Editoras from "./Componentes/Admin/Editoras";
@@ -12,6 +18,7 @@ import Clientes from "./Componentes/Admin/Clientes";
 import Livros from "./Componentes/Admin/Livros";
 import { InfoLivro } from "./Componentes/Loja/InfoLivro";
 import MyModal from "./Componentes/MyModal";
+import Contactos from "./Componentes/Contactos";
 
 function App() {
   const [user, setUser] = useState({
@@ -46,28 +53,37 @@ function App() {
   }, []);
 
   function addQuantity(item) {
-    let oldShoppingCart = user.shoppingCart;
+    //só deixa prosseguir na rotina se existir um user logado, e não for staff
+    if (user.id != "" && !user.staff) {
+      let oldShoppingCart = user.shoppingCart;
 
-    //verificar se um item já existe
-    if (oldShoppingCart.some((e) => e.item.id === item.id)) {
-      oldShoppingCart = oldShoppingCart.map((e) => {
-        if (e.item.id === item.id) {
-          e.quantity++;
-        }
-        return e;
-      });
-    } else {
-      let myItem = {
-        quantity: 1,
-        item: item,
-      };
-      oldShoppingCart = [myItem, ...oldShoppingCart];
+      //verificar se um item já existe
+      if (oldShoppingCart.some((e) => e.item.id === item.id)) {
+        oldShoppingCart = oldShoppingCart.map((e) => {
+          if (e.item.id === item.id) {
+            e.quantity++;
+          }
+          return e;
+        });
+      } else {
+        let myItem = {
+          quantity: 1,
+          item: item,
+        };
+        oldShoppingCart = [myItem, ...oldShoppingCart];
+      }
+
+      setUser({ ...user, shoppingCart: oldShoppingCart });
       setErr("Adicionou o livro " + item.titulo + " ao carrinho de compras.");
       setErrLevel("success");
       handleOpen();
+    } else {
+      setErr(
+        "É necessário estar registado como cliente para poder comprar este livro."
+      );
+      setErrLevel("info");
+      handleOpen();
     }
-
-    setUser({ ...user, shoppingCart: oldShoppingCart });
   }
 
   function removeQuanitty(item) {
@@ -135,7 +151,10 @@ function App() {
               />
             }
           ></Route>
-          <Route path="/contactos"></Route>
+          <Route
+            path="/contactos"
+            element={<Contactos theme={myTheme} />}
+          ></Route>
           <Route
             path="/login"
             element={
@@ -158,6 +177,7 @@ function App() {
             element={
               <Registo
                 theme={myTheme}
+                user={user}
                 setUser={setUser}
                 modalControls={{
                   setOpen: setOpen,
@@ -237,7 +257,14 @@ function App() {
 }
 
 function VerificaUser({ user, children }) {
-  if (!user) {
+  if (user.id == "") {
+    return <Navigate to="/" replace={true} />;
+  }
+  return children;
+}
+
+function VerificaStaff({ user, children }) {
+  if (!user.staff) {
     return <Navigate to="/" replace={true} />;
   }
   return children;

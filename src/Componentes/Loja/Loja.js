@@ -12,7 +12,7 @@ import { green, indigo, red } from "@mui/material/colors";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Loja({ theme, user, addItem, modalControls, API_URL }) {
+export default function Loja({ theme, user, addItem, API_URL }) {
   const [livros, setLivros] = React.useState([]);
 
   const navigate = useNavigate();
@@ -78,9 +78,8 @@ export default function Loja({ theme, user, addItem, modalControls, API_URL }) {
                 subtitle={
                   <span>
                     preço: {livro.preco}€{" "}
-                    {user.id != "" && !user.staff ? (
+                    {!user.staff ? (
                       <>
-                        (
                         {livro.stock > 0 ? (
                           <Tooltip title="Em stock, clique para adicionar ao carrinho de compras">
                             <AddTask

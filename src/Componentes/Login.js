@@ -17,7 +17,7 @@ import { useNavigate } from "react-router-dom";
 export function Login({ theme, setUser, modalControls, API_URL }) {
   const [newUser, setNewUser] = useState({
     nome: "",
-    email: "",
+    username: "",
     staff: false,
   });
   const [password, setPassword] = useState("");
@@ -32,13 +32,14 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
 
   const doLogin = () => {
     if (validar()) {
-      fetch(API_URL + "/loginCliente", {
+      fetch(API_URL + "/login" + (staff ? "Funcionario" : "Cliente"), {
         method: "POST",
         headers: {
           "Content-type": "application/json",
         },
         body: JSON.stringify({
-          email: newUser.email,
+          email: !staff ? newUser.username : "",
+          username: staff ? newUser.username : "",
           password: password,
         }),
       })
@@ -52,7 +53,7 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
           if (parsedResponse.statusOk) {
             setUser({
               id: parsedResponse.newID,
-              username: newUser.email,
+              username: newUser.username,
               staff: staff,
               shoppingCart: [],
             });
@@ -73,8 +74,8 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
   };
   function validar() {
     modalControls.setErrLevel("error");
-    if (newUser.email === "") {
-      modalControls.setErr("Email não preenchido");
+    if (newUser.username === "") {
+      modalControls.setErr((staff ? "Username" : "Email") + " não preenchido");
       modalControls.handleOpen();
       return false;
     }
@@ -102,9 +103,9 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
           <Grid item xs={2}>
             <TextField
               label="Email ou username"
-              value={newUser.email}
+              value={newUser.username}
               onChange={(e) => {
-                setNewUser({ ...newUser, email: e.target.value });
+                setNewUser({ ...newUser, username: e.target.value });
               }}
               style={{ backgroundColor: "white" }}
               type="text"
@@ -123,7 +124,7 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
               required
             />
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={7}>
             <FormLabel id="demo-radio-buttons-group-label">
               Tipo de utilizador
             </FormLabel>
@@ -166,6 +167,7 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
               color="primary"
               size="small"
               onClick={() => {
+                setUser({ staff: staff });
                 navigate("/registo");
               }}
               sx={{ m: 1 }}
