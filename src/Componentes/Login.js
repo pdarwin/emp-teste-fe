@@ -102,7 +102,7 @@ export function Login({ theme, user, setUser, modalControls, API_URL }) {
           </Grid>
           <Grid item xs={2}>
             <TextField
-              label="Email ou username"
+              label={staff ? "Username" : "Email"}
               value={newUser.username}
               onChange={(e) => {
                 setNewUser({ ...newUser, username: e.target.value });
@@ -150,6 +150,13 @@ export function Login({ theme, user, setUser, modalControls, API_URL }) {
               />
             </RadioGroup>
           </Grid>
+          <Grid item xs={5} />
+          <Grid item xs={7}>
+            <Typography variant="caption">
+              Caso ainda não seja nosso cliente, pode registar-se usando o botão
+              abaixo.
+            </Typography>
+          </Grid>
           <Grid item xs={1}>
             <Button
               variant="contained"
@@ -159,6 +166,19 @@ export function Login({ theme, user, setUser, modalControls, API_URL }) {
               sx={{ m: 1 }}
             >
               Entrar
+            </Button>
+          </Grid>
+          <Grid item xs={4}>
+            <Button
+              variant="contained"
+              color="secondary"
+              size="small"
+              onClick={() => {
+                navigate(-1);
+              }}
+              sx={{ m: 1 }}
+            >
+              Voltar
             </Button>
           </Grid>
           <Grid item xs={2}>
@@ -173,19 +193,6 @@ export function Login({ theme, user, setUser, modalControls, API_URL }) {
               sx={{ m: 1 }}
             >
               Registar
-            </Button>
-          </Grid>
-          <Grid item xs={1}>
-            <Button
-              variant="contained"
-              color="secondary"
-              size="small"
-              onClick={() => {
-                navigate(-1);
-              }}
-              sx={{ m: 1 }}
-            >
-              Voltar
             </Button>
           </Grid>
         </Grid>
