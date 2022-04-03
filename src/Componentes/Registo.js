@@ -2,6 +2,7 @@ import { ThemeProvider } from "@emotion/react";
 import {
   Alert,
   Button,
+  Container,
   FormControl,
   FormControlLabel,
   FormLabel,
@@ -38,9 +39,17 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
 
   const navigate = useNavigate();
 
+  // Controla se é cliente ou funcionário via radio button
+  const [staff, setStaff] = useState(false);
+
+  const staffFunc = () => {
+    setStaff(!staff);
+  };
+
   function registar() {
+    console.log(newUser);
     if (validar()) {
-      fetch(API_URL + "/addCliente", {
+      fetch(API_URL + "/add" + (!staff ? "Cliente" : "Funcionario"), {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -48,8 +57,8 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
         body: JSON.stringify({
           nome: newUser.nome,
           data_nascimento: newUser.data_nascimento,
-          email: newUser.email,
-          morada: newUser.morada,
+          email: staff ? newUser.email : "",
+          morada: staff ? newUser.morada : "",
           password: password,
           ativo: true,
         }),
@@ -61,15 +70,25 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
           return response.json();
         })
         .then((parsedResponse) => {
-          if (parsedResponse.statusOK) {
+          console.log(parsedResponse);
+          if (parsedResponse.statusOk) {
             setUser({
+              id: parsedResponse.newID,
               nome: newUser.nome,
-              username: newUser.email,
-              staff: newUser.staff,
+              username: staff ? parsedResponse.newUsername : newUser.email,
+              staff: staff,
+              shoppingCart: [],
             });
-            modalControls.setErr("Registo efetuado com sucesso");
+            modalControls.setErr(
+              "Registo efetuado com sucesso." + staff
+                ? " Foi-lhe atribuído o nome de usuário " +
+                    parsedResponse.newUsername +
+                    ". Por favor anote-o."
+                : ""
+            );
             modalControls.setErrLevel("success");
             modalControls.handleOpen();
+            navigate("/");
           } else {
             modalControls.setErr(parsedResponse.msg);
             modalControls.setErrLevel("error");
@@ -89,20 +108,22 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
       modalControls.handleOpen();
       return false;
     }
-    if (newUser.email === "") {
-      modalControls.setErr("Email não preenchido");
-      modalControls.handleOpen();
-      return false;
-    }
-    if (!validEmail.test(newUser.email)) {
-      modalControls.setErr("Email inválido");
-      modalControls.handleOpen();
-      return false;
-    }
-    if (newUser.morada === "") {
-      modalControls.setErr("Morada não preenchida");
-      modalControls.handleOpen();
-      return false;
+    if (!staff) {
+      if (newUser.email === "") {
+        modalControls.setErr("Email não preenchido");
+        modalControls.handleOpen();
+        return false;
+      }
+      if (!validEmail.test(newUser.email)) {
+        modalControls.setErr("Email inválido");
+        modalControls.handleOpen();
+        return false;
+      }
+      if (newUser.morada === "") {
+        modalControls.setErr("Morada não preenchida");
+        modalControls.handleOpen();
+        return false;
+      }
     }
     if (password === "") {
       modalControls.setErr("Password não preenchida");
@@ -142,18 +163,16 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
             <Typography variant="h5">Registo de utilizador</Typography>
           </Grid>
           <Grid item xs={3}>
-            <FormControl>
-              <TextField
-                label="Nome"
-                value={newUser.nome}
-                onChange={(e) => {
-                  setNewUser({ ...newUser, nome: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Nome"
+              value={newUser.nome}
+              onChange={(e) => {
+                setNewUser({ ...newUser, nome: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
           <Grid item xs={3}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -167,90 +186,87 @@ export function Registo({ theme, setUser, modalControls, API_URL }) {
               />
             </LocalizationProvider>
           </Grid>
-          <Grid item xs={6}>
-            <FormControl>
-              <FormLabel id="demo-radio-buttons-group-label">
-                Tipo de utilizador
-              </FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue={newUser.staff}
-                name="radio-buttons-group"
-                onChange={(e) => {
-                  setNewUser({ ...newUser, staff: e.target.value });
-                }}
-                value={newUser.staff}
-              >
-                <FormControlLabel
-                  value={false}
-                  control={<Radio />}
-                  label="Cliente"
-                />
-                <FormControlLabel
-                  value={true}
-                  control={<Radio />}
-                  label="Funcionário"
-                />
-              </RadioGroup>
-            </FormControl>
-          </Grid>
-          <Grid item xs={3}>
-            <FormControl>
-              <TextField
-                label="Email"
-                value={newUser.email}
-                onChange={(e) => {
-                  setNewUser({ ...newUser, email: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
+          <Grid item xs={5} mx={5}>
+            <FormLabel id="demo-radio-buttons-group-label">
+              Tipo de utilizador
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue={staff}
+              name="radio-buttons-group"
+              onChange={staffFunc}
+              value={staff}
+            >
+              <FormControlLabel
+                value={false}
+                control={<Radio />}
+                label="Cliente"
+                onChange={staffFunc}
               />
-            </FormControl>
-          </Grid>
-          <Grid item xs={8}>
-            <FormControl>
-              <TextField
-                label="Morada"
-                value={newUser.morada}
-                onChange={(e) => {
-                  setNewUser({ ...newUser, morada: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
+              <FormControlLabel
+                value={true}
+                control={<Radio />}
+                label="Funcionário"
+                onChange={staffFunc}
               />
-            </FormControl>
+            </RadioGroup>
           </Grid>
 
+          {!staff ? (
+            <Grid container sx={{ p: 1 }}>
+              <Grid item xs={3}>
+                <TextField
+                  label="Email"
+                  value={newUser.email}
+                  onChange={(e) => {
+                    setNewUser({ ...newUser, email: e.target.value });
+                  }}
+                  style={{ backgroundColor: "white" }}
+                  type="text"
+                  required
+                />
+              </Grid>
+              <Grid item xs={8}>
+                <TextField
+                  label="Morada"
+                  value={newUser.morada}
+                  onChange={(e) => {
+                    setNewUser({ ...newUser, morada: e.target.value });
+                  }}
+                  style={{ backgroundColor: "white" }}
+                  type="text"
+                  required
+                />
+              </Grid>
+            </Grid>
+          ) : (
+            ""
+          )}
+
           <Grid item xs={3}>
-            <FormControl>
-              <TextField
-                label="Password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                style={{ backgroundColor: "white" }}
-                type="password"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              style={{ backgroundColor: "white" }}
+              type="password"
+              required
+            />
           </Grid>
           <Grid item xs={8}>
-            <FormControl>
-              <TextField
-                label="Confirme a password"
-                value={password2}
-                onChange={(e) => {
-                  setPassword2(e.target.value);
-                }}
-                style={{ backgroundColor: "white" }}
-                type="password"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Confirme a password"
+              value={password2}
+              onChange={(e) => {
+                setPassword2(e.target.value);
+              }}
+              style={{ backgroundColor: "white" }}
+              type="password"
+              required
+            />
           </Grid>
           <Grid item xs={2}>
             <Button

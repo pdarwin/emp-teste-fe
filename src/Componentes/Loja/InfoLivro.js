@@ -124,7 +124,7 @@ export function InfoLivro({ theme, user, addItem, API_URL }) {
             Voltar
           </Button>
         </Grid>
-        {user.id != "" ? (
+        {user.id != "" && !user.staff ? (
           <Grid item xs={6}>
             {livro.stock > 0 ? (
               <Button

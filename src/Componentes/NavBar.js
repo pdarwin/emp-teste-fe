@@ -101,7 +101,7 @@ export default function NavBar({
                 )}
               </PopupState>
             </Box>
-            {user.id != "" ? (
+            {user.id != "" && !user.staff ? (
               <MyShoppingCart
                 user={user}
                 setUser={setUser}

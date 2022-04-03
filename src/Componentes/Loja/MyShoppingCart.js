@@ -34,7 +34,7 @@ export default function MyShoppingCart({
 
   function pagar() {
     const total = calculateSum();
-
+    console.log(user);
     fetch(API_URL + "/addCompra/" + user.id, {
       method: "POST",
       headers: {
@@ -54,6 +54,7 @@ export default function MyShoppingCart({
         return response.json();
       })
       .then((parsedResponse) => {
+        console.log(parsedResponse);
         if (parsedResponse.statusOk) {
           modalControls.setErr(
             "Compra no valor de " +

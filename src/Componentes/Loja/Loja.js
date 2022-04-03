@@ -2,20 +2,17 @@ import { ThemeProvider } from "@emotion/react";
 import { Tooltip } from "@material-ui/core";
 import { AddTask, DoNotDisturbAltOutlined } from "@mui/icons-material";
 import {
-  Alert,
   Box,
-  Grid,
   ImageList,
   ImageListItem,
   ImageListItemBar,
-  Modal,
   Typography,
 } from "@mui/material";
 import { green, indigo, red } from "@mui/material/colors";
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Loja({ theme, user, addItem, API_URL }) {
+export default function Loja({ theme, user, addItem, modalControls, API_URL }) {
   const [livros, setLivros] = React.useState([]);
 
   const navigate = useNavigate();
@@ -23,16 +20,6 @@ export default function Loja({ theme, user, addItem, API_URL }) {
   React.useEffect(() => {
     getLivros();
   }, []);
-
-  //Gestão do modal
-  const [open, setOpen] = React.useState(false);
-  const [errLevel, setErrLevel] = React.useState("error");
-  const [err, setErr] = React.useState("");
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   function getLivros() {
     fetch(API_URL + "/getLivros", {
@@ -56,14 +43,6 @@ export default function Loja({ theme, user, addItem, API_URL }) {
   }
   return (
     <ThemeProvider theme={theme}>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Alert severity={errLevel}>{err}</Alert>
-      </Modal>
       <Typography variant="h4" my={4} align="center" color="primary">
         Bem vindo à Livraria Requalificar
       </Typography>
@@ -99,27 +78,27 @@ export default function Loja({ theme, user, addItem, API_URL }) {
                 subtitle={
                   <span>
                     preço: {livro.preco}€{" "}
-                    {livro.stock > 0 || user.id != "" ? (
-                      <Tooltip title="Em stock, clique para adicionar ao carrinho de compras">
-                        <AddTask
-                          sx={{ color: green[300] }}
-                          onClick={() => {
-                            addItem(livro);
-                            setErr(
-                              "Adicionou o livro " +
-                                livro.titulo +
-                                " ao carrinho de compras."
-                            );
-                            setErrLevel("success");
-                            handleOpen();
-                          }}
-                          style={{ cursor: "pointer" }}
-                        />
-                      </Tooltip>
+                    {user.id != "" && !user.staff ? (
+                      <>
+                        (
+                        {livro.stock > 0 ? (
+                          <Tooltip title="Em stock, clique para adicionar ao carrinho de compras">
+                            <AddTask
+                              sx={{ color: green[300] }}
+                              onClick={() => {
+                                addItem(livro);
+                              }}
+                              style={{ cursor: "pointer" }}
+                            />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="esgotado">
+                            <DoNotDisturbAltOutlined sx={{ color: red[400] }} />
+                          </Tooltip>
+                        )}
+                      </>
                     ) : (
-                      <Tooltip title="esgotado">
-                        <DoNotDisturbAltOutlined sx={{ color: red[400] }} />
-                      </Tooltip>
+                      ""
                     )}
                   </span>
                 }

@@ -62,6 +62,9 @@ function App() {
         item: item,
       };
       oldShoppingCart = [myItem, ...oldShoppingCart];
+      setErr("Adicionou o livro " + item.titulo + " ao carrinho de compras.");
+      setErrLevel("success");
+      handleOpen();
     }
 
     setUser({ ...user, shoppingCart: oldShoppingCart });
@@ -121,6 +124,13 @@ function App() {
                 theme={myTheme}
                 user={user}
                 addItem={addQuantity}
+                modalControls={{
+                  setOpen: setOpen,
+                  setErr: setErr,
+                  setErrLevel: setErrLevel,
+                  handleOpen: handleOpen,
+                  handleClose: handleClose,
+                }}
                 API_URL={API_URL}
               />
             }

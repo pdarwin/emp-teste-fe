@@ -23,6 +23,13 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
+  // Controla se é cliente ou funcionário via radio button
+  const [staff, setStaff] = useState(false);
+
+  const staffFunc = () => {
+    setStaff(!staff);
+  };
+
   const doLogin = () => {
     if (validar()) {
       fetch(API_URL + "/loginCliente", {
@@ -42,15 +49,17 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
           return response.json();
         })
         .then((parsedResponse) => {
-          if (parsedResponse.statusOK) {
+          if (parsedResponse.statusOk) {
             setUser({
               id: parsedResponse.newID,
               username: newUser.email,
-              staff: newUser.staff,
+              staff: staff,
+              shoppingCart: [],
             });
             modalControls.setErr("Login bem sucedido");
             modalControls.setErrLevel("success");
             modalControls.handleOpen();
+            navigate("/");
           } else {
             modalControls.setErr(parsedResponse.msg);
             modalControls.setErrLevel("error");
@@ -90,62 +99,55 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
           <Grid item xs={12}>
             <Typography variant="h5">Entrar na aplicação</Typography>
           </Grid>
-
           <Grid item xs={2}>
-            <FormControl>
-              <TextField
-                label="Email ou username"
-                value={newUser.email}
-                onChange={(e) => {
-                  setNewUser({ ...newUser, email: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Email ou username"
+              value={newUser.email}
+              onChange={(e) => {
+                setNewUser({ ...newUser, email: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
           <Grid item xs={3}>
-            <FormControl>
-              <TextField
-                label="Password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-                style={{ backgroundColor: "white" }}
-                type="password"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
+              style={{ backgroundColor: "white" }}
+              type="password"
+              required
+            />
           </Grid>
-          <Grid item xs={7}>
-            <FormControl>
-              <FormLabel id="demo-radio-buttons-group-label">
-                Tipo de utilizador
-              </FormLabel>
-              <RadioGroup
-                row
-                aria-labelledby="demo-radio-buttons-group-label"
-                defaultValue={newUser.staff}
-                name="radio-buttons-group"
-                onChange={(e) => {
-                  setNewUser({ ...newUser, staff: e.target.value });
-                }}
-                value={newUser.staff}
-              >
-                <FormControlLabel
-                  value={false}
-                  control={<Radio />}
-                  label="Cliente"
-                />
-                <FormControlLabel
-                  value={true}
-                  control={<Radio />}
-                  label="Funcionário"
-                />
-              </RadioGroup>
-            </FormControl>
+          <Grid item xs={6}>
+            <FormLabel id="demo-radio-buttons-group-label">
+              Tipo de utilizador
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="demo-radio-buttons-group-label"
+              defaultValue={staff}
+              name="radio-buttons-group"
+              onChange={staffFunc}
+              value={staff}
+            >
+              <FormControlLabel
+                value={false}
+                control={<Radio />}
+                label="Cliente"
+                onChange={staffFunc}
+              />
+              <FormControlLabel
+                value={true}
+                control={<Radio />}
+                label="Funcionário"
+                onChange={staffFunc}
+              />
+            </RadioGroup>
           </Grid>
           <Grid item xs={1}>
             <Button
@@ -168,7 +170,7 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
               }}
               sx={{ m: 1 }}
             >
-              Fazer registo
+              Registar
             </Button>
           </Grid>
           <Grid item xs={1}>
