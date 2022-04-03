@@ -12,25 +12,30 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { Alert, Modal, ThemeProvider } from "@mui/material";
+import { ThemeProvider } from "@mui/material";
 import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import Menu from "@mui/material/Menu";
-import { indigo } from "@mui/material/colors";
-import { ShoppingCart } from "@mui/icons-material";
+import { indigo, orange } from "@mui/material/colors";
 import MyShoppingCart from "./Loja/MyShoppingCart";
-import MyModal from "./MyModal";
+import { Person, SupervisorAccount } from "@mui/icons-material";
 
 const pages = [
   { name: "Loja", link: "/" },
   { name: "Contactos", link: "/contactos" },
 ];
 
-const menuadmin = [
+const menuAdmin = [
   { name: "Gestão de livros", link: "/livros" },
   { name: "Gestão de autores", link: "/autores" },
   { name: "Gestão de editoras", link: "/editoras" },
   { name: "Gestão de clientes", link: "/clientes" },
   { name: "Gestão de funcionários", link: "/staff" },
+];
+
+const menuCliente = [
+  { name: "Lista de compras", link: "/compras" },
+  { name: "Gestão de cupões", link: "/cupoes" },
+  { name: "Preferencias", link: "/settings" },
 ];
 
 export default function NavBar({
@@ -79,33 +84,35 @@ export default function NavBar({
                   {page.name}
                 </Button>
               ))}
-              {user.staff ? (
-                <PopupState variant="popover" popupId="demo-popup-menu">
-                  {(popupState) => (
-                    <React.Fragment>
-                      <Button variant="" {...bindTrigger(popupState)}>
-                        Administração
-                      </Button>
-                      <Menu {...bindMenu(popupState)}>
-                        {menuadmin.map((page) => (
-                          <MenuItem
-                            key={page.name}
-                            onClick={() => {
-                              navigate(page.link);
-                            }}
-                          >
-                            {page.name}
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </React.Fragment>
-                  )}
-                </PopupState>
-              ) : (
-                ""
-              )}
             </Box>
-            {user.id != "" && !user.staff ? (
+            {user.staff ? ( // Menu administração
+              <PopupState variant="popover" popupId="demo-popup-menu">
+                {(popupState) => (
+                  <React.Fragment>
+                    <Button variant="" {...bindTrigger(popupState)}>
+                      Administração
+                    </Button>
+                    <Menu {...bindMenu(popupState)}>
+                      {menuAdmin.map((page) => (
+                        <MenuItem
+                          key={page.name}
+                          onClick={() => {
+                            popupState.setOpen(!popupState);
+                            navigate(page.link);
+                          }}
+                        >
+                          {page.name}
+                        </MenuItem>
+                      ))}
+                    </Menu>
+                  </React.Fragment>
+                )}
+              </PopupState>
+            ) : (
+              ""
+            )}
+
+            {user.id != "" && !user.staff ? ( // Menu carrinho de compras
               <MyShoppingCart
                 user={user}
                 setUser={setUser}
@@ -117,41 +124,74 @@ export default function NavBar({
             ) : (
               ""
             )}
-            <Box sx={{ flexGrow: 0, mx: 2 }}>
-              {user.username === "" ? (
-                <Tooltip title="Entrar">
-                  <Button
-                    onClick={() => {
-                      navigate("/login");
-                    }}
-                    sx={{ p: 0, color: indigo[100] }}
-                  >
-                    Entrar
-                  </Button>
-                </Tooltip>
-              ) : (
-                <Typography>
-                  {user.username}
-                  <Tooltip title="Sair da aplicação">
-                    <Button
-                      onClick={() => {
-                        setUser({
-                          ...user,
-                          id: "",
-                          username: "",
-                          staff: false,
-                          shoppingCart: [],
-                        });
-                        navigate("/");
-                      }}
-                      sx={{ p: 0, color: indigo[100] }}
+            {user.id === "" || user.username === "" ? ( //Menu utilizador
+              <Tooltip title="Entrar">
+                <Button
+                  onClick={() => {
+                    navigate("/login");
+                  }}
+                  sx={{ p: 0, color: indigo[100] }}
+                >
+                  Entrar
+                </Button>
+              </Tooltip>
+            ) : (
+              <PopupState variant="popover" popupId="demo-popup-menu">
+                {(popupState) => (
+                  <React.Fragment>
+                    <Tooltip
+                      title={
+                        "Utilizador atual: " +
+                        user.username +
+                        (user.staff ? " (staff)" : "")
+                      }
                     >
-                      Sair
-                    </Button>
-                  </Tooltip>
-                </Typography>
-              )}
-            </Box>
+                      <IconButton variant="" {...bindTrigger(popupState)}>
+                        <Avatar sx={{ bgcolor: orange[500] }}>
+                          {user.staff ? (
+                            <SupervisorAccount></SupervisorAccount>
+                          ) : (
+                            <Person></Person>
+                          )}
+                        </Avatar>
+                      </IconButton>
+                    </Tooltip>
+                    <Menu {...bindMenu(popupState)}>
+                      {!user.staff
+                        ? menuCliente.map((page) => (
+                            <MenuItem
+                              key={page.name}
+                              onClick={() => {
+                                popupState.setOpen(!popupState);
+                                navigate(page.link);
+                              }}
+                            >
+                              {page.name}
+                            </MenuItem>
+                          ))
+                        : ""}
+                      <Tooltip title="Sair da aplicação">
+                        <MenuItem
+                          key="sair"
+                          onClick={() => {
+                            setUser({
+                              ...user,
+                              id: "",
+                              username: "",
+                              staff: false,
+                              shoppingCart: [],
+                            });
+                            navigate("/");
+                          }}
+                        >
+                          Sair
+                        </MenuItem>
+                      </Tooltip>
+                    </Menu>
+                  </React.Fragment>
+                )}
+              </PopupState>
+            )}
           </Toolbar>
         </Container>
       </AppBar>

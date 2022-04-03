@@ -1,7 +1,6 @@
 import { ThemeProvider } from "@emotion/react";
 import {
   Button,
-  FormControl,
   FormControlLabel,
   FormLabel,
   Grid,
@@ -14,7 +13,7 @@ import { indigo } from "@mui/material/colors";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export function Login({ theme, setUser, modalControls, API_URL }) {
+export function Login({ theme, user, setUser, modalControls, API_URL }) {
   const [newUser, setNewUser] = useState({
     nome: "",
     username: "",
@@ -51,6 +50,7 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
         })
         .then((parsedResponse) => {
           if (parsedResponse.statusOk) {
+            console.log(parsedResponse);
             setUser({
               id: parsedResponse.newID,
               username: newUser.username,
@@ -167,7 +167,7 @@ export function Login({ theme, setUser, modalControls, API_URL }) {
               color="primary"
               size="small"
               onClick={() => {
-                setUser({ staff: staff });
+                setUser({ ...user, staff: staff });
                 navigate("/registo");
               }}
               sx={{ m: 1 }}

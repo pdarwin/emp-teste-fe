@@ -1,5 +1,6 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   { field: "nome", headerName: "Nome", width: 200 },
@@ -16,12 +17,14 @@ const columns = [
   ,
 ];
 
-export default function Clientes({ theme, API_URL }) {
+export default function Clientes({ theme, modalControls, API_URL }) {
   const [clientes, setClientes] = React.useState([]);
 
   React.useEffect(() => {
     getClientes();
   }, []);
+
+  const navigate = useNavigate();
 
   function getClientes() {
     fetch(API_URL + "/getClientes", {

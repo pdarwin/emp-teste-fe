@@ -61,8 +61,8 @@ export function Registo({ theme, user, setUser, modalControls, API_URL }) {
         body: JSON.stringify({
           nome: newUser.nome,
           data_nascimento: newUser.data_nascimento,
-          email: staff ? newUser.email : "",
-          morada: staff ? newUser.morada : "",
+          email: !staff ? newUser.email : "",
+          morada: !staff ? newUser.morada : "",
           password: password,
           ativo: true,
         }),
@@ -78,17 +78,17 @@ export function Registo({ theme, user, setUser, modalControls, API_URL }) {
           if (parsedResponse.statusOk) {
             setUser({
               id: parsedResponse.newID,
-              nome: newUser.nome,
               username: staff ? parsedResponse.newUsername : newUser.email,
               staff: staff,
               shoppingCart: [],
             });
             modalControls.setErr(
-              "Registo efetuado com sucesso." + staff
-                ? " Foi-lhe atribuído o nome de usuário " +
+              "Registo efetuado com sucesso." +
+                (staff
+                  ? " Foi-lhe atribuído o nome de usuário " +
                     parsedResponse.newUsername +
                     ". Por favor anote-o."
-                : ""
+                  : "")
             );
             modalControls.setErrLevel("success");
             modalControls.handleOpen();

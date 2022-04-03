@@ -4,7 +4,6 @@ import {
   Box,
   Button,
   Chip,
-  FilledInput,
   FormControl,
   Grid,
   InputAdornment,
@@ -23,6 +22,7 @@ import { indigo } from "@mui/material/colors";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import { styled } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   { field: "titulo", headerName: "Título", width: 200 },
@@ -44,7 +44,7 @@ const columns = [
   },
 ];
 
-export default function Livros({ theme, user, API_URL }) {
+export default function Livros({ theme, modalControls, API_URL }) {
   const [livros, setLivros] = React.useState([]);
   const [autores, setAutores] = React.useState([]);
   const [selAutores, setSelAutores] = React.useState([]);
@@ -60,15 +60,6 @@ export default function Livros({ theme, user, API_URL }) {
     stock: 0,
     autores: [],
   });
-
-  //Gestão do modal
-  const [open, setOpen] = React.useState(false);
-  const [errLevel, setErrLevel] = React.useState("error");
-  const [err, setErr] = React.useState("");
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const Input = styled("input")({
     display: "none",
@@ -89,6 +80,8 @@ export default function Livros({ theme, user, API_URL }) {
     getLivros();
     getAutores();
   }, []);
+
+  const navigate = useNavigate();
 
   function getLivros() {
     fetch(API_URL + "/getLivros", {
@@ -187,13 +180,14 @@ export default function Livros({ theme, user, API_URL }) {
               stock: 0,
               autores: [],
             });
-            setErr("Registo bem sucedido");
-            setErrLevel("success");
-            handleOpen();
+            setSelAutores([]);
+            modalControls.setErr("Registo bem sucedido");
+            modalControls.setErrLevel("success");
+            modalControls.handleOpen();
           } else {
-            setErr(parsedResponse.msg);
-            setErrLevel("error");
-            handleOpen();
+            modalControls.setErr(parsedResponse.msg);
+            modalControls.setErrLevel("error");
+            modalControls.handleOpen();
           }
         })
         .catch((error) => {
@@ -212,55 +206,55 @@ export default function Livros({ theme, user, API_URL }) {
   }
 
   function valida() {
-    setErrLevel("error");
+    modalControls.setErrLevel("error");
     if (livro.titulo === "") {
-      setErr("Título não preenchido");
-      handleOpen();
+      modalControls.setErr("Título não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.isbn === "") {
-      setErr("ISBN não preenchido");
-      handleOpen();
+      modalControls.setErr("ISBN não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.sinopse === "") {
-      setErr("Sinopse não preenchida");
-      handleOpen();
+      modalControls.setErr("Sinopse não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.edicao === "") {
-      setErr("Edição não preenchida");
-      handleOpen();
+      modalControls.setErr("Edição não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.imagem_capa === "") {
-      setErr("É necessário escolher uma imagem de capa");
-      handleOpen();
+      modalControls.setErr("É necessário escolher uma imagem de capa");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.data_lancamento === null) {
-      setErr("Data de lançamento não preenchida");
-      handleOpen();
+      modalControls.setErr("Data de lançamento não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.num_paginas <= 0) {
-      setErr("O número de páginas tem de ser maior que zero");
-      handleOpen();
+      modalControls.setErr("O número de páginas tem de ser maior que zero");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.preco <= 0) {
-      setErr("O preço tem de ser maior que zero");
-      handleOpen();
+      modalControls.setErr("O preço tem de ser maior que zero");
+      modalControls.handleOpen();
       return false;
     }
     if (livro.stock < 0) {
-      setErr("O stock não pode ser menor que zero");
-      handleOpen();
+      modalControls.setErr("O stock não pode ser menor que zero");
+      modalControls.handleOpen();
       return false;
     }
     if (selAutores.length === 0) {
-      setErr("Associe pelo menos um autor");
-      handleOpen();
+      modalControls.setErr("Associe pelo menos um autor");
+      modalControls.handleOpen();
       return false;
     }
     return true;
@@ -280,19 +274,6 @@ export default function Livros({ theme, user, API_URL }) {
         />
       </div>
       <form className="form">
-        <div>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            /*               onClick={() => {
-                if (errLevel === "success") navigate("/");
-              }} */
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Alert severity={errLevel}>{err}</Alert>
-          </Modal>
-        </div>
         <Grid
           container
           rowSpacing={1}
@@ -365,18 +346,16 @@ export default function Livros({ theme, user, API_URL }) {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={3}>
-            <FormControl>
-              <TextField
-                label="ISBN"
-                value={livro.isbn}
-                onChange={(e) => {
-                  setLivro({ ...livro, isbn: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="ISBN"
+              value={livro.isbn}
+              onChange={(e) => {
+                setLivro({ ...livro, isbn: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
           <Grid item xs={1}>
             <FormControl fullWidth>
@@ -411,18 +390,16 @@ export default function Livros({ theme, user, API_URL }) {
             </FormControl>
           </Grid>
           <Grid item xs={2}>
-            <FormControl>
-              <TextField
-                label="Edição"
-                value={livro.edicao}
-                onChange={(e) => {
-                  setLivro({ ...livro, edicao: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Edição"
+              value={livro.edicao}
+              onChange={(e) => {
+                setLivro({ ...livro, edicao: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
           <Grid item xs={8}>
             <label htmlFor="contained-button-file">
@@ -458,38 +435,48 @@ export default function Livros({ theme, user, API_URL }) {
             </FormControl>
           </Grid>
           <Grid item xs={3}>
-            <FormControl variant="outlined">
-              <TextField
-                id="filled-adornment-amount"
-                value={livro.preco}
-                onChange={(e) => {
-                  setLivro({ ...livro, preco: e.target.value });
-                }}
-                InputProps={{
-                  inputMode: "numeric",
-                  pattern: "[0-9]*",
-                  startAdornment: (
-                    <InputAdornment position="start">€</InputAdornment>
-                  ),
-                }}
-                style={{ backgroundColor: "white" }}
-                type="number"
-                label="Preço"
-              />
-            </FormControl>
+            <TextField
+              id="filled-adornment-amount"
+              value={livro.preco}
+              onChange={(e) => {
+                setLivro({ ...livro, preco: e.target.value });
+              }}
+              InputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                startAdornment: (
+                  <InputAdornment position="start">€</InputAdornment>
+                ),
+              }}
+              style={{ backgroundColor: "white" }}
+              type="number"
+              label="Preço"
+            />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6} />
+          <Grid item xs={2}>
             <Button
               type="button"
-              size="large"
+              size="small"
               variant="contained"
               color="primary"
               className="form__custom-button"
               onClick={gravar}
-              sx={{ m: 1 }}
             >
               Gravar
               <input type="Submit" hidden></input>
+            </Button>
+          </Grid>
+          <Grid item xs={1}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                navigate(-1);
+              }}
+              size="small"
+            >
+              Voltar
             </Button>
           </Grid>
         </Grid>

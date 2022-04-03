@@ -59,9 +59,10 @@ export default function Loja({ theme, user, addItem, API_URL }) {
       >
         <ImageList
           sx={{ width: 800, height: 500 }}
+          variant="quilted"
           cols={8}
           gap={9}
-          rowHeight={30}
+          rowHeight={150}
         >
           {livros.map((livro) => (
             <ImageListItem key={livro.id}>

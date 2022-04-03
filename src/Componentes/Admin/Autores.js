@@ -16,6 +16,7 @@ import { DataGrid } from "@mui/x-data-grid";
 import { indigo } from "@mui/material/colors";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   { field: "nome", headerName: "Nome", width: 200 },
@@ -30,7 +31,7 @@ const columns = [
   },
 ];
 
-export default function Autores({ theme, user, API_URL }) {
+export default function Autores({ theme, modalControls, API_URL }) {
   const [autores, setAutores] = React.useState([]);
   const [editoras, setEditoras] = React.useState([]);
   const [autor, setAutor] = React.useState({
@@ -40,15 +41,6 @@ export default function Autores({ theme, user, API_URL }) {
     editora_id: "",
   });
 
-  //Gestão do modal
-  const [open, setOpen] = React.useState(false);
-  const [errLevel, setErrLevel] = React.useState("error");
-  const [err, setErr] = React.useState("");
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   //regexp de validação do email
   const validEmail = new RegExp("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
@@ -56,6 +48,8 @@ export default function Autores({ theme, user, API_URL }) {
     getAutores();
     getEditoras();
   }, []);
+
+  const navigate = useNavigate();
 
   function getAutores() {
     fetch(API_URL + "/getAutores", {
@@ -134,13 +128,13 @@ export default function Autores({ theme, user, API_URL }) {
               data_nascimento: null,
               editora_id: "",
             });
-            setErr("Registo bem sucedido");
-            setErrLevel("success");
-            handleOpen();
+            modalControls.setErr("Registo bem sucedido");
+            modalControls.setErrLevel("success");
+            modalControls.handleOpen();
           } else {
-            setErr(parsedResponse.msg);
-            setErrLevel("error");
-            handleOpen();
+            modalControls.setErr(parsedResponse.msg);
+            modalControls.setErrLevel("error");
+            modalControls.handleOpen();
           }
         })
         .catch((error) => {
@@ -150,30 +144,30 @@ export default function Autores({ theme, user, API_URL }) {
   }
 
   function valida() {
-    setErrLevel("error");
+    modalControls.setErrLevel("error");
     if (autor.nome === "") {
-      setErr("Nome não preenchido");
-      handleOpen();
+      modalControls.setErr("Nome não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (autor.email === "") {
-      setErr("Email não preenchido");
-      handleOpen();
+      modalControls.setErr("Email não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (!validEmail.test(autor.email)) {
-      setErr("Email inválido");
-      handleOpen();
+      modalControls.setErr("Email inválido");
+      modalControls.handleOpen();
       return false;
     }
     if (autor.data_nascimento === null) {
-      setErr("Data de nascimento não preenchida");
-      handleOpen();
+      modalControls.setErr("Data de nascimento não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     if (autor.editora_id === "") {
-      setErr("Associe uma editora ao autor");
-      handleOpen();
+      modalControls.setErr("Associe uma editora ao autor");
+      modalControls.handleOpen();
       return false;
     }
     return true;
@@ -193,19 +187,6 @@ export default function Autores({ theme, user, API_URL }) {
         />
       </div>
       <form className="form">
-        <div>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            /*               onClick={() => {
-                if (errLevel === "success") navigate("/");
-              }} */
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Alert severity={errLevel}>{err}</Alert>
-          </Modal>
-        </div>
         <Grid
           container
           rowSpacing={1}
@@ -216,18 +197,16 @@ export default function Autores({ theme, user, API_URL }) {
             <Typography variant="h5">Registo de autor</Typography>
           </Grid>
           <Grid item xs={6}>
-            <FormControl variant="outlined">
-              <TextField
-                label="Nome"
-                value={autor.nome}
-                onChange={(e) => {
-                  setAutor({ ...autor, nome: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Nome"
+              value={autor.nome}
+              onChange={(e) => {
+                setAutor({ ...autor, nome: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
           <Grid item xs={6}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -242,18 +221,16 @@ export default function Autores({ theme, user, API_URL }) {
             </LocalizationProvider>
           </Grid>
           <Grid item xs={6}>
-            <FormControl variant="outlined">
-              <TextField
-                label="Email"
-                value={autor.email}
-                onChange={(e) => {
-                  setAutor({ ...autor, email: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Email"
+              value={autor.email}
+              onChange={(e) => {
+                setAutor({ ...autor, email: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
           <Grid item xs={6}>
             <FormControl fullWidth>
@@ -275,18 +252,30 @@ export default function Autores({ theme, user, API_URL }) {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6} />
+          <Grid item xs={2}>
             <Button
               type="button"
-              size="large"
+              size="small"
               variant="contained"
               color="primary"
               className="form__custom-button"
               onClick={gravar}
-              sx={{ m: 1 }}
             >
               Gravar
               <input type="Submit" hidden></input>
+            </Button>
+          </Grid>
+          <Grid item xs={1}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                navigate(-1);
+              }}
+              size="small"
+            >
+              Voltar
             </Button>
           </Grid>
         </Grid>

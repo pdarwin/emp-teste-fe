@@ -1,16 +1,9 @@
 import { ThemeProvider } from "@emotion/react";
-import {
-  Alert,
-  Button,
-  FormControl,
-  Grid,
-  Modal,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, Grid, TextField, Typography } from "@mui/material";
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import { indigo } from "@mui/material/colors";
+import { useNavigate } from "react-router-dom";
 
 const columns = [
   { field: "nome", headerName: "Nome", width: 250 },
@@ -24,25 +17,18 @@ const columns = [
   },
 ];
 
-export default function Editoras({ theme, user, API_URL }) {
+export default function Editoras({ theme, modalControls, API_URL }) {
   const [editoras, setEditoras] = React.useState([]);
   const [editora, setEditora] = React.useState({
     nome: "",
     morada: "",
   });
 
-  //Gestão do modal
-  const [open, setOpen] = React.useState(false);
-  const [errLevel, setErrLevel] = React.useState("error");
-  const [err, setErr] = React.useState("");
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   React.useEffect(() => {
     getEditoras();
   }, []);
+
+  const navigate = useNavigate();
 
   function getEditoras() {
     fetch(API_URL + "/getEditoras", {
@@ -93,13 +79,13 @@ export default function Editoras({ theme, user, API_URL }) {
             editora.ativo = true;
             setEditoras([...editoras, editora]);
             setEditora({ ...editora, nome: "", morada: "" });
-            setErr("Registo bem sucedido");
-            setErrLevel("success");
-            handleOpen();
+            modalControls.setErr("Registo bem sucedido");
+            modalControls.setErrLevel("success");
+            modalControls.handleOpen();
           } else {
-            setErr(parsedResponse.msg);
-            setErrLevel("error");
-            handleOpen();
+            modalControls.setErr(parsedResponse.msg);
+            modalControls.setErrLevel("error");
+            modalControls.handleOpen();
           }
         })
         .catch((error) => {
@@ -109,15 +95,15 @@ export default function Editoras({ theme, user, API_URL }) {
   }
 
   function valida() {
-    setErrLevel("error");
+    modalControls.setErrLevel("error");
     if (editora.nome === "") {
-      setErr("Nome não preenchido");
-      handleOpen();
+      modalControls.setErr("Nome não preenchido");
+      modalControls.handleOpen();
       return false;
     }
     if (editora.morada === "") {
-      setErr("Morada não preenchida");
-      handleOpen();
+      modalControls.setErr("Morada não preenchida");
+      modalControls.handleOpen();
       return false;
     }
     return true;
@@ -137,19 +123,6 @@ export default function Editoras({ theme, user, API_URL }) {
         />
       </div>
       <form className="form">
-        <div>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            /*               onClick={() => {
-                if (errLevel === "success") navigate("/");
-              }} */
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Alert severity={errLevel}>{err}</Alert>
-          </Modal>
-        </div>
         <Grid
           container
           rowSpacing={1}
@@ -160,45 +133,53 @@ export default function Editoras({ theme, user, API_URL }) {
             <Typography variant="h5">Registo de editora</Typography>
           </Grid>
           <Grid item xs={12}>
-            <FormControl variant="outlined">
-              <TextField
-                label="Nome"
-                value={editora.nome}
-                onChange={(e) => {
-                  setEditora({ ...editora, nome: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Nome"
+              value={editora.nome}
+              onChange={(e) => {
+                setEditora({ ...editora, nome: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
           <Grid item xs={12}>
-            <FormControl variant="outlined">
-              <TextField
-                label="Morada"
-                value={editora.morada}
-                onChange={(e) => {
-                  setEditora({ ...editora, morada: e.target.value });
-                }}
-                style={{ backgroundColor: "white" }}
-                type="text"
-                required
-              />
-            </FormControl>
+            <TextField
+              label="Morada"
+              value={editora.morada}
+              onChange={(e) => {
+                setEditora({ ...editora, morada: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
           </Grid>
-          <Grid item xs={12}>
+          <Grid item xs={6} />
+          <Grid item xs={2}>
             <Button
               type="button"
-              size="large"
+              size="small"
               variant="contained"
               color="primary"
               className="form__custom-button"
               onClick={gravar}
-              sx={{ m: 1 }}
             >
               Gravar
               <input type="Submit" hidden></input>
+            </Button>
+          </Grid>
+          <Grid item xs={1}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                navigate(-1);
+              }}
+              size="small"
+            >
+              Voltar
             </Button>
           </Grid>
         </Grid>

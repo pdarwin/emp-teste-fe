@@ -112,22 +112,12 @@ export function InfoLivro({ theme, user, addItem, API_URL }) {
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={6}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              navigate(-1);
-            }}
-            size="small"
-          >
-            Voltar
-          </Button>
-        </Grid>
+        <Grid item xs={6} />
         {!user.staff ? (
-          <Grid item xs={6}>
+          <Grid item xs={3}>
             {livro.stock > 0 ? (
               <Button
+                size="small"
                 variant="contained"
                 color="primary"
                 onClick={() => {
@@ -152,6 +142,18 @@ export function InfoLivro({ theme, user, addItem, API_URL }) {
         ) : (
           ""
         )}
+        <Grid item xs={3}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              navigate(-1);
+            }}
+            size="small"
+          >
+            Voltar
+          </Button>
+        </Grid>
       </Grid>
     </ThemeProvider>
   ) : (

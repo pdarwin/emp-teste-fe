@@ -19,6 +19,7 @@ import Livros from "./Componentes/Admin/Livros";
 import { InfoLivro } from "./Componentes/Loja/InfoLivro";
 import MyModal from "./Componentes/MyModal";
 import Contactos from "./Componentes/Contactos";
+import Compras from "./Componentes/Clientes/Compras";
 
 function App() {
   const [user, setUser] = useState({
@@ -51,6 +52,8 @@ function App() {
   useEffect(() => {
     document.title = "Livraria Requalificar";
   }, []);
+
+  console.log(user);
 
   function addQuantity(item) {
     //só deixa prosseguir na rotina se existir um user logado, e não for staff
@@ -161,6 +164,7 @@ function App() {
               <VerificaNoUser user={user}>
                 <Login
                   theme={myTheme}
+                  user={user}
                   setUser={setUser}
                   modalControls={{
                     setOpen: setOpen,
@@ -197,8 +201,18 @@ function App() {
           <Route
             path="/livros"
             element={
-              <VerificaStaff>
-                <Livros theme={myTheme} API_URL={API_URL} />
+              <VerificaStaff user={user}>
+                <Livros
+                  theme={myTheme}
+                  modalControls={{
+                    setOpen: setOpen,
+                    setErr: setErr,
+                    setErrLevel: setErrLevel,
+                    handleOpen: handleOpen,
+                    handleClose: handleClose,
+                  }}
+                  API_URL={API_URL}
+                />
               </VerificaStaff>
             }
           ></Route>
@@ -217,7 +231,17 @@ function App() {
             path="/autores"
             element={
               <VerificaStaff user={user}>
-                <Autores theme={myTheme} API_URL={API_URL} />
+                <Autores
+                  theme={myTheme}
+                  modalControls={{
+                    setOpen: setOpen,
+                    setErr: setErr,
+                    setErrLevel: setErrLevel,
+                    handleOpen: handleOpen,
+                    handleClose: handleClose,
+                  }}
+                  API_URL={API_URL}
+                />
               </VerificaStaff>
             }
           ></Route>
@@ -225,8 +249,17 @@ function App() {
             path="/editoras"
             element={
               <VerificaStaff user={user}>
-                {" "}
-                <Editoras theme={myTheme} API_URL={API_URL} />
+                <Editoras
+                  theme={myTheme}
+                  modalControls={{
+                    setOpen: setOpen,
+                    setErr: setErr,
+                    setErrLevel: setErrLevel,
+                    handleOpen: handleOpen,
+                    handleClose: handleClose,
+                  }}
+                  API_URL={API_URL}
+                />
               </VerificaStaff>
             }
           ></Route>
@@ -234,20 +267,62 @@ function App() {
             path="/clientes"
             element={
               <VerificaStaff user={user}>
-                <Clientes theme={myTheme} API_URL={API_URL} />
+                <Clientes
+                  theme={myTheme}
+                  modalControls={{
+                    setOpen: setOpen,
+                    setErr: setErr,
+                    setErrLevel: setErrLevel,
+                    handleOpen: handleOpen,
+                    handleClose: handleClose,
+                  }}
+                  API_URL={API_URL}
+                />
               </VerificaStaff>
             }
           ></Route>
           <Route path="/staff"></Route>
+          <Route
+            path="/settings"
+            element={
+              <VerificaUser user={user}>
+                <Clientes theme={myTheme} API_URL={API_URL} />
+              </VerificaUser>
+            }
+          ></Route>
+          <Route
+            path="/compras"
+            element={
+              <VerificaCliente user={user}>
+                <Compras theme={myTheme} user={user} API_URL={API_URL} />
+              </VerificaCliente>
+            }
+          ></Route>
+          <Route
+            path="/cupoes"
+            element={
+              <VerificaCliente user={user}>
+                <Clientes theme={myTheme} API_URL={API_URL} />
+              </VerificaCliente>
+            }
+          ></Route>
         </Routes>
       </BrowserRouter>
     </div>
   );
 }
 
+// Verifica está logado
+function VerificaUser({ user, children }) {
+  if (!user || user.id == "" || user.username == "") {
+    return <Navigate to="/" replace={true} />;
+  }
+  return children;
+}
+
 // Verifica se não está logado
 function VerificaNoUser({ user, children }) {
-  if (user.username != "") {
+  if (!user || user.id != "") {
     return <Navigate to="/" replace={true} />;
   }
   return children;
@@ -255,7 +330,16 @@ function VerificaNoUser({ user, children }) {
 
 // Verifica se é staff
 function VerificaStaff({ user, children }) {
-  if (!user.staff) {
+  console.log(user);
+  if (!user || user.id == "" || !user.staff) {
+    return <Navigate to="/" replace={true} />;
+  }
+  return children;
+}
+
+// Verifica se é cliente
+function VerificaCliente({ user, children }) {
+  if (!user || user.id == "" || user.staff) {
     return <Navigate to="/" replace={true} />;
   }
   return children;
