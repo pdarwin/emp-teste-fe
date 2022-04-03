@@ -80,7 +80,7 @@ export function InfoLivro({ theme, user, addItem, API_URL }) {
           </Typography>
         </Grid>
         <Grid item xs={6}>
-          <img src={livro.imagem_capa} />
+          <img src={livro.imagem_capa} height={250} />
         </Grid>
         <Grid item xs={6}>
           <Grid container rowSpacing={1} columnSpacing={1}>
