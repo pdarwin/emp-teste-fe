@@ -156,8 +156,9 @@ export function Login({ theme, user, setUser, modalControls, API_URL }) {
           <Grid item xs={5} />
           <Grid item xs={7}>
             <Typography variant="caption">
-              Caso ainda não seja nosso cliente, pode registar-se usando o botão
-              abaixo.
+              {!staff
+                ? "Caso ainda não seja nosso cliente, pode registar-se usando o botão abaixo."
+                : ""}
             </Typography>
           </Grid>
           <Grid item xs={1}>
