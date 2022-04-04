@@ -10,17 +10,17 @@ import {
 import { indigo } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 
-export default function Compras({ theme, user, setDetalheCompra, API_URL }) {
-  const [compras, setCompras] = React.useState([]);
+export default function Cupoes({ theme, user, API_URL }) {
+  const [cupoes, setCupoes] = React.useState([]);
 
   React.useEffect(() => {
-    getCompras();
+    getCupoes();
   }, []);
 
   const navigate = useNavigate();
 
-  function getCompras() {
-    fetch(API_URL + "/getComprasByClienteId/" + user.id, {
+  function getCupoes() {
+    fetch(API_URL + "/getCupoesByClienteId/" + user.id, {
       headers: { "Content-type": "application/json" },
     })
       .then((response) => {
@@ -34,32 +34,15 @@ export default function Compras({ theme, user, setDetalheCompra, API_URL }) {
       })
       .then((parsedResponse) => {
         console.log(parsedResponse);
-        setCompras(parsedResponse.lista);
+        setCupoes(parsedResponse.lista);
       })
       .catch((error) => {
         alert(error);
       });
   }
 
-  // Recurso bom para a datagrid: https://smartdevpreneur.com/the-ultimate-guide-to-customizing-material-ui-datagrid/
-  const handleCellClick = (param, event) => {
-    setDetalheCompra(param.row.livros);
-    navigate("/infocompra");
-  };
-
   const columns = [
-    {
-      field: "detalhes",
-      headerName: "Detalhes",
-      width: 200,
-      renderCell: (cellValues) => {
-        return (
-          <Typography variant="caption">Clique para ver os detalhes</Typography>
-        );
-      },
-    },
-    { field: "data", headerName: "Data", width: 200 },
-    { field: "valor", headerName: "Valor (€)", width: 200 },
+    { field: "desconto", headerName: "Desconto", width: 200 },
     ,
   ];
 
@@ -74,11 +57,10 @@ export default function Compras({ theme, user, setDetalheCompra, API_URL }) {
         <Grid item xs={12}>
           <DataGrid
             style={{ height: 400, width: "100%" }}
-            rows={compras}
+            rows={cupoes}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5]}
-            onCellClick={handleCellClick}
           />
         </Grid>
         <Grid item xs={12}>

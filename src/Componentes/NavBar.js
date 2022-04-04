@@ -34,7 +34,7 @@ const menuAdmin = [
 
 const menuCliente = [
   { name: "Lista de compras", link: "/compras" },
-  { name: "Gestão de cupões", link: "/cupoes" },
+  { name: "Lista de cupões", link: "/cupoes" },
   { name: "Preferencias", link: "/settings" },
 ];
 

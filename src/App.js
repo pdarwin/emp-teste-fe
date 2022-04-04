@@ -20,6 +20,9 @@ import { InfoLivro } from "./Componentes/Loja/InfoLivro";
 import MyModal from "./Componentes/MyModal";
 import Contactos from "./Componentes/Contactos";
 import Compras from "./Componentes/Clientes/Compras";
+import InfoCompra from "./Componentes/Clientes/InfoCompra";
+import Cupoes from "./Componentes/Clientes/Cupoes";
+import Preferencias from "./Componentes/Preferencias";
 
 function App() {
   const [user, setUser] = useState({
@@ -28,6 +31,8 @@ function App() {
     staff: false,
     shoppingCart: [],
   });
+
+  const [detalheCompra, setDetalheCompra] = useState([]);
 
   const API_URL = "http://localhost:8080";
 
@@ -284,7 +289,12 @@ function App() {
             path="/settings"
             element={
               <VerificaUser user={user}>
-                <Clientes theme={myTheme} API_URL={API_URL} />
+                <Preferencias
+                  theme={myTheme}
+                  user={user}
+                  setUser={setUser}
+                  API_URL={API_URL}
+                />
               </VerificaUser>
             }
           ></Route>
@@ -292,7 +302,24 @@ function App() {
             path="/compras"
             element={
               <VerificaCliente user={user}>
-                <Compras theme={myTheme} user={user} API_URL={API_URL} />
+                <Compras
+                  theme={myTheme}
+                  user={user}
+                  setDetalheCompra={setDetalheCompra}
+                  API_URL={API_URL}
+                />
+              </VerificaCliente>
+            }
+          ></Route>
+          <Route
+            path="/infocompra"
+            element={
+              <VerificaCliente user={user}>
+                <InfoCompra
+                  theme={myTheme}
+                  user={user}
+                  detalheCompra={detalheCompra}
+                />
               </VerificaCliente>
             }
           ></Route>
@@ -300,7 +327,7 @@ function App() {
             path="/cupoes"
             element={
               <VerificaCliente user={user}>
-                <Clientes theme={myTheme} API_URL={API_URL} />
+                <Cupoes theme={myTheme} user={user} API_URL={API_URL} />
               </VerificaCliente>
             }
           ></Route>
