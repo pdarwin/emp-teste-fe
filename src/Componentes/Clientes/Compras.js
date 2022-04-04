@@ -33,6 +33,7 @@ export default function Compras({ theme, user, API_URL }) {
         return response.json();
       })
       .then((parsedResponse) => {
+        console.log(parsedResponse);
         setCompras(parsedResponse.lista);
       })
       .catch((error) => {

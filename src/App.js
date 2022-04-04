@@ -53,8 +53,6 @@ function App() {
     document.title = "Livraria Requalificar";
   }, []);
 
-  console.log(user);
-
   function addQuantity(item) {
     //só deixa prosseguir na rotina se existir um user logado, e não for staff
     if (user.id != "" && !user.staff) {
@@ -330,7 +328,6 @@ function VerificaNoUser({ user, children }) {
 
 // Verifica se é staff
 function VerificaStaff({ user, children }) {
-  console.log(user);
   if (!user || user.id == "" || !user.staff) {
     return <Navigate to="/" replace={true} />;
   }

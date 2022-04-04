@@ -401,7 +401,7 @@ export default function Livros({ theme, modalControls, API_URL }) {
               required
             />
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={3}>
             <label htmlFor="contained-button-file">
               <Input
                 accept="image/*"
@@ -419,6 +419,9 @@ export default function Livros({ theme, modalControls, API_URL }) {
                 Carregar imagem da capa
               </Button>
             </label>
+          </Grid>
+          <Grid item xs={3}>
+            <img src={livro.imagem_capa} loading="lazy" height={100} />
           </Grid>
           <Grid item xs={1}>
             <FormControl fullWidth>

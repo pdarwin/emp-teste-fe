@@ -16,6 +16,8 @@ export default function MyShoppingCart({
   modalControls,
   API_URL,
 }) {
+  const [livros, setLivros] = React.useState([]);
+
   //Gestão do popover
   const [anchor, setAnchor] = React.useState(null);
 
@@ -34,7 +36,17 @@ export default function MyShoppingCart({
 
   function pagar() {
     const total = calculateSum();
-    console.log(user);
+
+    // Ciclo para preencher os livros da compra
+    setLivros(...livros, []);
+    shoppingCart.map((element) => {
+      livros.push({
+        id: parseInt(element.item.id),
+        titulo: element.item.titulo,
+        stock: parseInt(element.quantity),
+      });
+    });
+
     fetch(API_URL + "/addCompra/" + user.id, {
       method: "POST",
       headers: {
@@ -42,6 +54,7 @@ export default function MyShoppingCart({
       },
       body: JSON.stringify({
         valor: total,
+        livros: livros,
       }),
     })
       .then((response) => {
@@ -71,6 +84,7 @@ export default function MyShoppingCart({
           setUser({ ...user, shoppingCart: [] });
           setAnchor(false);
         } else {
+          console.log(parsedResponse);
           modalControls.setErr(parsedResponse.msg);
           modalControls.setErrLevel("error");
           modalControls.handleOpen();

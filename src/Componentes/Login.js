@@ -57,7 +57,10 @@ export function Login({ theme, user, setUser, modalControls, API_URL }) {
               staff: staff,
               shoppingCart: [],
             });
-            modalControls.setErr("Login bem sucedido");
+            modalControls.setErr(
+              "Login bem sucedido. Bem vindo/a de volta à Livraria Requalificar, " +
+                newUser.username
+            );
             modalControls.setErrLevel("success");
             modalControls.handleOpen();
             navigate("/");
