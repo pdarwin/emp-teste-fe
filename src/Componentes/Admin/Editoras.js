@@ -13,7 +13,6 @@ const columns = [
     headerName: "Ativo",
     type: "boolean",
     width: 150,
-    editable: true,
   },
 ];
 

@@ -1,20 +1,33 @@
 import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
+import { useNavigate } from "react-router-dom";
 import { Button, Grid, ThemeProvider, Typography } from "@mui/material";
 import { indigo } from "@mui/material/colors";
-import { useNavigate } from "react-router-dom";
 
-export default function Compras({ theme, user, setDetalheCompra, API_URL }) {
-  const [compras, setCompras] = React.useState([]);
+const columns = [
+  { field: "nome", headerName: "Nome", width: 200 },
+  { field: "username", headerName: "Username", width: 200 },
+  { field: "data_nascimento", headerName: "Data nasc.", width: 70 },
+  {
+    field: "ativo",
+    headerName: "Ativo",
+    type: "boolean",
+    width: 10,
+  },
+  ,
+];
+
+export default function Funcionarios({ theme, modalControls, API_URL }) {
+  const [funcionarios, setFuncionarios] = React.useState([]);
 
   React.useEffect(() => {
-    getCompras();
+    getFuncionarios();
   }, []);
 
   const navigate = useNavigate();
 
-  function getCompras() {
-    fetch(API_URL + "/getComprasByClienteId/" + user.id, {
+  function getFuncionarios() {
+    fetch(API_URL + "/getFuncionarios", {
       headers: { "Content-type": "application/json" },
     })
       .then((response) => {
@@ -27,40 +40,16 @@ export default function Compras({ theme, user, setDetalheCompra, API_URL }) {
         return response.json();
       })
       .then((parsedResponse) => {
-        console.log(parsedResponse);
-        setCompras(parsedResponse.lista);
+        setFuncionarios(parsedResponse);
       })
       .catch((error) => {
         alert(error);
       });
   }
-
-  // Recurso bom para a datagrid: https://smartdevpreneur.com/the-ultimate-guide-to-customizing-material-ui-datagrid/
-  const handleCellClick = (param, event) => {
-    setDetalheCompra(param.row.livros);
-    navigate("/infocompra");
-  };
-
-  const columns = [
-    {
-      field: "detalhes",
-      headerName: "Detalhes",
-      width: 200,
-      renderCell: (cellValues) => {
-        return (
-          <Typography variant="caption">Clique para ver os detalhes</Typography>
-        );
-      },
-    },
-    { field: "data", headerName: "Data", width: 200 },
-    { field: "valor", headerName: "Valor (€)", width: 200 },
-    ,
-  ];
-
   return (
     <ThemeProvider theme={theme}>
       <Typography variant="h5" my={3} align="center" color="primary">
-        Histórico de compras de {user.username}
+        Gestão de funcionários
       </Typography>
       <Grid
         container
@@ -71,11 +60,10 @@ export default function Compras({ theme, user, setDetalheCompra, API_URL }) {
         <Grid item xs={12}>
           <DataGrid
             style={{ height: 400, width: "100%" }}
-            rows={compras}
+            rows={funcionarios}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5]}
-            onCellClick={handleCellClick}
           />
         </Grid>
         <Grid item xs={12}>

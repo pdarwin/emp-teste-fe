@@ -1,21 +1,12 @@
-import * as React from "react";
-import { DataGrid } from "@mui/x-data-grid";
 import { Button, Grid, ThemeProvider, Typography } from "@mui/material";
 import { indigo } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 
-export default function InfoCompra({ theme, user, detalheCompra }) {
+export default function Estatisticas({ theme, setUser, user, API_URL }) {
   const navigate = useNavigate();
-
-  console.log(detalheCompra);
-
-  const columns = [{ field: "titulo", headerName: "Título", width: 200 }, ,];
 
   return (
     <ThemeProvider theme={theme}>
-      <Typography variant="h5" my={3} align="center" color="primary">
-        Vista de detalhe da compra
-      </Typography>
       <Grid
         container
         rowSpacing={1}
@@ -23,22 +14,22 @@ export default function InfoCompra({ theme, user, detalheCompra }) {
         sx={{ backgroundColor: indigo[100], p: 8 }}
       >
         <Grid item xs={12}>
-          <DataGrid
-            style={{ height: 400, width: "100%" }}
-            rows={detalheCompra}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-          />
+          <Typography variant="h5" my={4} color={indigo[800]}>
+            Estatísticas do utilizador {user.username}
+          </Typography>
+        </Grid>
+        <Grid item xs={12}>
+          <Typography variant="body1">Em desenvolvimento</Typography>
         </Grid>
         <Grid item xs={12}>
           <Button
             variant="contained"
             color="secondary"
+            size="small"
             onClick={() => {
               navigate(-1);
             }}
-            size="small"
+            sx={{ m: 3 }}
           >
             Voltar
           </Button>

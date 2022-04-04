@@ -23,6 +23,8 @@ import Compras from "./Componentes/Clientes/Compras";
 import InfoCompra from "./Componentes/Clientes/InfoCompra";
 import Cupoes from "./Componentes/Clientes/Cupoes";
 import Preferencias from "./Componentes/Preferencias";
+import Funcionarios from "./Componentes/Admin/Funcionarios";
+import Estatisticas from "./Componentes/Estatisticas";
 
 function App() {
   const [user, setUser] = useState({
@@ -284,12 +286,42 @@ function App() {
               </VerificaStaff>
             }
           ></Route>
-          <Route path="/staff"></Route>
+          <Route
+            path="/staff"
+            element={
+              <VerificaStaff user={user}>
+                <Funcionarios
+                  theme={myTheme}
+                  modalControls={{
+                    setOpen: setOpen,
+                    setErr: setErr,
+                    setErrLevel: setErrLevel,
+                    handleOpen: handleOpen,
+                    handleClose: handleClose,
+                  }}
+                  API_URL={API_URL}
+                />
+              </VerificaStaff>
+            }
+          ></Route>
           <Route
             path="/settings"
             element={
               <VerificaUser user={user}>
                 <Preferencias
+                  theme={myTheme}
+                  user={user}
+                  setUser={setUser}
+                  API_URL={API_URL}
+                />
+              </VerificaUser>
+            }
+          ></Route>
+          <Route
+            path="/stats"
+            element={
+              <VerificaUser user={user}>
+                <Estatisticas
                   theme={myTheme}
                   user={user}
                   setUser={setUser}

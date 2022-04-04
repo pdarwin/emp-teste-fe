@@ -40,7 +40,6 @@ const columns = [
     headerName: "Stock",
     type: "number",
     width: 5,
-    editable: true,
   },
 ];
 
@@ -260,10 +259,17 @@ export default function Livros({ theme, modalControls, API_URL }) {
     return true;
   }
 
+  const handleCellClick = (param, event) => {
+    navigate("/livros/" + param.row.id);
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Typography variant="h5" my={3} align="center" color="primary">
         Gestão de livros
+      </Typography>
+      <Typography variant="body2" align="center">
+        Clique numa linha da tabela para ver a vista detalhada
       </Typography>
       <div style={{ height: 400, width: "100%" }}>
         <DataGrid
@@ -271,6 +277,7 @@ export default function Livros({ theme, modalControls, API_URL }) {
           columns={columns}
           pageSize={5}
           rowsPerPageOptions={[5]}
+          onCellClick={handleCellClick}
         />
       </div>
       <form className="form">

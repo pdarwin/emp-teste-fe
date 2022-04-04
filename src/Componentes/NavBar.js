@@ -33,8 +33,12 @@ const menuAdmin = [
 ];
 
 const menuCliente = [
-  { name: "Lista de compras", link: "/compras" },
-  { name: "Lista de cupões", link: "/cupoes" },
+  { name: "Histórico de compras", link: "/compras" },
+  { name: "Cupões disponíveis", link: "/cupoes" },
+];
+
+const menuUser = [
+  { name: "Estatísticas", link: "/stats" },
   { name: "Preferencias", link: "/settings" },
 ];
 
@@ -170,6 +174,17 @@ export default function NavBar({
                             </MenuItem>
                           ))
                         : ""}
+                      {menuUser.map((page) => (
+                        <MenuItem
+                          key={page.name}
+                          onClick={() => {
+                            popupState.setOpen(!popupState);
+                            navigate(page.link);
+                          }}
+                        >
+                          {page.name}
+                        </MenuItem>
+                      ))}
                       <Tooltip title="Sair da aplicação">
                         <MenuItem
                           key="sair"
