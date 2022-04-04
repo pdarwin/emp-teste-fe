@@ -4,9 +4,10 @@ import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
 import Tooltip from "@mui/material/Tooltip";
-import { Badge, Paper, Popover } from "@mui/material";
-import { Add, Remove, ShoppingCart } from "@mui/icons-material";
+import { Badge, Grid, MenuItem, Paper, Popover, Select } from "@mui/material";
+import { Add, Discount, Remove, ShoppingCart } from "@mui/icons-material";
 import PaymentIcon from "@mui/icons-material/Payment";
+import { indigo } from "@mui/material/colors";
 
 export default function MyShoppingCart({
   user,
@@ -17,6 +18,8 @@ export default function MyShoppingCart({
   API_URL,
 }) {
   const [livros, setLivros] = React.useState([]);
+  const [cupoes, setCupoes] = React.useState(null);
+  const [cupao, setCupao] = React.useState(null);
 
   //Gestão do popover
   const [anchor, setAnchor] = React.useState(null);
@@ -35,8 +38,6 @@ export default function MyShoppingCart({
   }
 
   function pagar() {
-    const total = calculateSum();
-
     // Ciclo para preencher os livros da compra
     setLivros(...livros, []);
     shoppingCart.map((element) => {
@@ -46,6 +47,23 @@ export default function MyShoppingCart({
         stock: parseInt(element.quantity),
       });
     });
+
+    //calcula o total sem sesconto desconto
+    let total = calculateSum();
+
+    //Verificação de cupões
+    if (cupao != null) {
+      cupoes.map((c) => {
+        if (c.id == cupao.id) {
+          cupao.desconto = c.desconto;
+        }
+      });
+
+      setCupoes(null);
+
+      //aplica o desconto
+      total = total - (total * cupao.desconto) / 100;
+    }
 
     fetch(API_URL + "/addCompra/" + user.id, {
       method: "POST",
@@ -68,6 +86,11 @@ export default function MyShoppingCart({
       })
       .then((parsedResponse) => {
         if (parsedResponse.statusOk) {
+          if (cupao != null) {
+            remCupao();
+            setCupao(null);
+          }
+          setCupoes(null);
           modalControls.setErr("");
           modalControls.setErr(
             "Compra no valor de " +
@@ -93,6 +116,33 @@ export default function MyShoppingCart({
       .catch((error) => {
         alert(error);
       });
+  }
+
+  function getCupoes() {
+    fetch(API_URL + "/getCupoesByClienteId/" + user.id, {
+      headers: { "Content-type": "application/json" },
+    })
+      .then((response) => {
+        console.log(response);
+        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
+        if (response.status !== 200) {
+          throw new Error("Erro:" + response.status);
+        }
+
+        return response.json();
+      })
+      .then((parsedResponse) => {
+        setCupoes(parsedResponse.lista);
+      })
+      .catch((error) => {
+        alert(error);
+      });
+  }
+
+  function remCupao() {
+    fetch(API_URL + "/remCupao/" + cupao.id, {
+      method: "PUT",
+    });
   }
 
   return (
@@ -194,6 +244,63 @@ export default function MyShoppingCart({
               justifyContent: "space-evenly",
             }}
           >
+            <Typography variant="body1" mx={1}>
+              Total = {calculateSum()}€
+            </Typography>
+          </Box>
+          <Grid container>
+            {cupoes == null ? (
+              <Grid item sx={12}>
+                <IconButton
+                  onClick={() => {
+                    getCupoes();
+                  }}
+                >
+                  <Typography variant="body1">
+                    Ver cupões disponíveis
+                  </Typography>
+                  <Discount />
+                </IconButton>
+              </Grid>
+            ) : (
+              ""
+            )}
+            {cupoes != null ? (
+              cupoes.length > 0 ? (
+                <Grid item sx={12}>
+                  <Typography variant="body1">
+                    Existem cupões disponíveis. Escolha o cupão que deseja usar
+                  </Typography>
+                  <Select
+                    labelId="cupoes"
+                    id="cupoes"
+                    value={cupao == null ? "" : cupao.id}
+                    label="Cupões"
+                    onChange={(e) => {
+                      setCupao({ ...cupao, id: e.target.value });
+                    }}
+                  >
+                    {cupoes.map((cupao) => (
+                      <MenuItem value={cupao.id} key={cupao.id}>
+                        {cupao.desconto}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Grid>
+              ) : (
+                "Não existem cupões disponíveis"
+              )
+            ) : (
+              ""
+            )}
+          </Grid>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              justifyContent: "space-evenly",
+            }}
+          >
             <Tooltip title="Pagar">
               <IconButton
                 onClick={() => {
@@ -201,7 +308,7 @@ export default function MyShoppingCart({
                 }}
               >
                 <Typography variant="body1" mx={1}>
-                  Total = {calculateSum()}€
+                  Pagar
                 </Typography>
                 <PaymentIcon />
               </IconButton>
