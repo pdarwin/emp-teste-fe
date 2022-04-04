@@ -48,6 +48,9 @@ export default function Cupoes({ theme, user, API_URL }) {
 
   return (
     <ThemeProvider theme={theme}>
+      <Typography variant="h5" my={3} align="center" color="primary">
+        Cupões disponíveis para {user.username}
+      </Typography>
       <Grid
         container
         rowSpacing={1}
