@@ -19,13 +19,17 @@ export default function Contactos({ theme }) {
           </Typography>
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="body1">Morada:</Typography>
+          <Typography variant="body1">
+            Morada: Rua do Castanheiro, Funchal
+          </Typography>
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="body1">Telefone:</Typography>
+          <Typography variant="body1">Telefone: +351 21 999 999</Typography>
         </Grid>
         <Grid item xs={12}>
-          <Typography variant="body1">Email:</Typography>
+          <Typography variant="body1">
+            Email: livrariarequalificar@gmail.com
+          </Typography>
         </Grid>
         <Grid item xs={12}>
           <Button
