@@ -164,7 +164,9 @@ export function Registo({ theme, user, setUser, modalControls, API_URL }) {
           sx={{ backgroundColor: indigo[100], p: 8 }}
         >
           <Grid item xs={12}>
-            <Typography variant="h5">Registo de utilizador</Typography>
+            <Typography variant="h5">
+              Registo de {staff ? "funcionário" : "cliente"}
+            </Typography>
           </Grid>
           <Grid item xs={3}>
             <TextField

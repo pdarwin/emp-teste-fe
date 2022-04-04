@@ -101,7 +101,9 @@ export function Login({ theme, user, setUser, modalControls, API_URL }) {
           sx={{ backgroundColor: indigo[100], p: 8 }}
         >
           <Grid item xs={12}>
-            <Typography variant="h5">Entrar na aplicação</Typography>
+            <Typography variant="h5">
+              Acesso de {staff ? "funcionário" : "cliente"}
+            </Typography>
           </Grid>
           <Grid item xs={2}>
             <TextField
