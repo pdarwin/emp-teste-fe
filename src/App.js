@@ -1,10 +1,4 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Loja from "./Componentes/Loja/Loja";
 import { Login } from "./Componentes/Login";
 import Editoras from "./Componentes/Admin/Editoras";

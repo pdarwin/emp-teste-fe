@@ -7,7 +7,6 @@ import Tooltip from "@mui/material/Tooltip";
 import { Badge, Grid, MenuItem, Paper, Popover, Select } from "@mui/material";
 import { Add, Discount, Remove, ShoppingCart } from "@mui/icons-material";
 import PaymentIcon from "@mui/icons-material/Payment";
-import { indigo } from "@mui/material/colors";
 
 export default function MyShoppingCart({
   user,
