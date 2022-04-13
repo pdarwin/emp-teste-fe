@@ -14,7 +14,7 @@ import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
 import config from "../Config.json";
 
-export default function MyForm({ type, data, setData }) {
+export default function MyForm({ type, getData }) {
   const [item, setItem] = useState({
     nome: "",
     morada: "",
@@ -58,7 +58,7 @@ export default function MyForm({ type, data, setData }) {
       .then((parsedResponse) => {
         if (parsedResponse.statusOk) {
           item.id = parsedResponse.newID;
-          setData([...data, item]);
+          getData();
           setItem({
             ...item,
             nome: "",

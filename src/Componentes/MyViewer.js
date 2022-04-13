@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useCustomContext } from "./CustomContext";
 import config from "../Config.json";
 import MyForm from "./MyForm";
+import MyDeleteForm from "./MyDeleteForm";
 
 export default function MyViewer({ type }) {
   const [data, setData] = useState(null);
@@ -90,7 +91,13 @@ export default function MyViewer({ type }) {
       <Typography variant="h5" my={3} align="center">
         {"Gestão de " + type}
       </Typography>
-
+      {type === "Empresas" || type === "Pessoas" ? (
+        <Typography variant="caption">
+          Clique na linha para ver os detalhes
+        </Typography>
+      ) : (
+        ""
+      )}
       {data !== null ? (
         <DataGrid
           rows={data}
@@ -122,7 +129,8 @@ export default function MyViewer({ type }) {
       >
         Voltar
       </Button>
-      <MyForm type={type} data={data} setData={setData} />
+      <MyDeleteForm type={type} getData={getData} />
+      <MyForm type={type} getData={getData} />
     </div>
   );
 }
