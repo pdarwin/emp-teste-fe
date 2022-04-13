@@ -28,6 +28,14 @@ function App() {
           <NavBar />
           <Routes>
             <Route path="/" element={<Viewer type={types.empresas} />} />
+            <Route
+              path="/pessoasporempresa/:id"
+              element={<Viewer type={types.pessoas} />}
+            />
+            <Route
+              path="/salariosporpessoa/:id"
+              element={<Viewer type={types.salarios} />}
+            />
           </Routes>
         </BrowserRouter>
       </CustomContext.Provider>

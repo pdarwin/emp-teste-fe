@@ -9,29 +9,6 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import Avatar from "@mui/material/Avatar";
 
-const pages = [
-  { name: "Loja", link: "/" },
-  { name: "Contactos", link: "/contactos" },
-];
-
-const menuAdmin = [
-  { name: "Gestão de livros", link: "/livros" },
-  { name: "Gestão de autores", link: "/autores" },
-  { name: "Gestão de editoras", link: "/editoras" },
-  { name: "Gestão de clientes", link: "/clientes" },
-  { name: "Gestão de funcionários", link: "/staff" },
-];
-
-const menuCliente = [
-  { name: "Histórico de compras", link: "/compras" },
-  { name: "Cupões disponíveis", link: "/cupoes" },
-];
-
-const menuUser = [
-  { name: "Estatísticas", link: "/stats" },
-  { name: "Preferencias", link: "/settings" },
-];
-
 export default function NavBar() {
   const navigate = useNavigate();
 

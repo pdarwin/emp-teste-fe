@@ -1,37 +1,87 @@
 import { Button, Grid, TextField, Typography } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { indigo } from "@mui/material/colors";
+import { blue } from "@mui/material/colors";
 import { actions } from "./ModalReducer";
 import { useCustomContext } from "./CustomContext";
-
-const columns = [
-  { field: "nome", headerName: "Nome", width: 250 },
-  { field: "morada", headerName: "Morada", width: 650 },
-  { field: "imagem", headerName: "Imagem", width: 650 },
-];
+import { DatePicker, LocalizationProvider } from "@mui/lab";
+import AdapterDateFns from "@mui/lab/AdapterDateFns";
 
 const API_URL = "http://localhost:8080";
 
 export default function Viewer({ type }) {
-  const [data, setData] = useState();
-  const [item, setItem] = useState({ nome: "", morada: "", image: "" });
+  const [data, setData] = useState(null);
+  const [item, setItem] = useState({
+    nome: "",
+    morada: "",
+    imagem: "",
+    email: "",
+    idade: 0,
+    data: null,
+    quantidade: 0,
+  });
   const { modalState, modalDispatch } = useCustomContext();
 
   useEffect(() => {
+    console.log("tudo", data);
+    setData(null);
     getData();
   }, []);
 
   useEffect(() => {
-    console.log(data);
+    console.log("data", data);
+    if (data === null) {
+      getData();
+    }
   }, [data]);
 
   const navigate = useNavigate();
 
+  const params = useParams();
+
+  let getType;
+  if (type === "Empresas") {
+    getType = "Empresas";
+  } else if (type === "Pessoas") {
+    getType = "PessoasByEmpresa/" + params.id;
+  } else if (type === "Salarios") {
+    getType = "SalariosByPessoa/" + params.id;
+  }
+
+  let postType;
+  if (type === "Empresas") {
+    postType = "Empresa";
+  } else if (type === "Pessoas") {
+    postType = "Pessoa/" + params.id;
+  } else if (type === "Salarios") {
+    postType = "Salario/" + params.id;
+  }
+
+  let columns;
+  if (type === "Empresas") {
+    columns = [
+      { field: "nome", headerName: "Nome", width: 250 },
+      { field: "morada", headerName: "Morada", width: 650 },
+      { field: "imagem", headerName: "Imagem", width: 650 },
+    ];
+  } else if (type === "Pessoas") {
+    columns = [
+      { field: "nome", headerName: "Nome", width: 250 },
+      { field: "idade", headerName: "Idade", width: 650 },
+      { field: "email", headerName: "Email", width: 650 },
+      { field: "imagem", headerName: "Imagem", width: 650 },
+    ];
+  } else if (type === "Salarios") {
+    columns = [
+      { field: "quantidade", headerName: "Quantidade", width: 250 },
+      { field: "data", headerName: "Data", width: 650 },
+    ];
+  }
+
   function getData() {
-    console.log("teste");
-    fetch(API_URL + "/get" + type, {
+    console.log(getType);
+    fetch(API_URL + "/get" + getType, {
       headers: { "Content-type": "application/json" },
     })
       .then((response) => {
@@ -45,8 +95,8 @@ export default function Viewer({ type }) {
         return response.json();
       })
       .then((parsedResponse) => {
-        setData(parsedResponse);
         console.log(parsedResponse);
+        setData(parsedResponse);
       })
       .catch((error) => {
         alert(error);
@@ -55,7 +105,7 @@ export default function Viewer({ type }) {
 
   function gravar() {
     //if (valida()) {
-    fetch(API_URL + "/addEmpresa", {
+    fetch(API_URL + "/add" + postType, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -75,7 +125,16 @@ export default function Viewer({ type }) {
         if (parsedResponse.statusOk) {
           item.id = parsedResponse.newID;
           setData([...data, item]);
-          setItem({ ...item, nome: "", morada: "", imagem: "" });
+          setItem({
+            ...item,
+            nome: "",
+            morada: "",
+            imagem: "",
+            email: "",
+            idade: 0,
+            data: null,
+            quantidade: 0,
+          });
           modalDispatch({
             type: actions.fireModal,
             payload: {
@@ -114,17 +173,27 @@ export default function Viewer({ type }) {
   }
  */
   return (
-    <>
+    <div>
       <Typography variant="h5" my={3} align="center">
         {"Gestão de " + type}
       </Typography>
       <div style={{ height: 400, width: "100%" }}>
-        {data !== undefined ? (
+        {data !== null ? (
           <DataGrid
             rows={data}
             columns={columns}
             pageSize={5}
             rowsPerPageOptions={[5]}
+            onCellClick={(params) => {
+              if (type === "Empresas") {
+                setData(null);
+                navigate("/pessoasporempresa/" + params.row.id);
+              }
+              if (type === "Pessoas") {
+                setData(null);
+                navigate("/salariosporpessoa/" + params.row.id);
+              }
+            }}
           />
         ) : (
           ""
@@ -134,49 +203,124 @@ export default function Viewer({ type }) {
         container
         rowSpacing={1}
         columnSpacing={1}
-        sx={{ backgroundColor: indigo[100], p: 8 }}
+        sx={{ backgroundColor: blue[200], p: 8 }}
       >
         <Grid item xs={12}>
           <Typography variant="h5">{"Registo de " + type}</Typography>
         </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="Nome"
-            value={item.nome}
-            onChange={(e) => {
-              setItem({ ...item, nome: e.target.value });
-            }}
-            style={{ backgroundColor: "white" }}
-            type="text"
-            required
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="Morada"
-            value={item.morada}
-            onChange={(e) => {
-              setItem({ ...item, morada: e.target.value });
-            }}
-            style={{ backgroundColor: "white" }}
-            type="text"
-            required
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            label="Imagem"
-            value={item.imagem}
-            onChange={(e) => {
-              setItem({ ...item, imagem: e.target.value });
-            }}
-            style={{ backgroundColor: "white" }}
-            type="text"
-            required
-          />
-        </Grid>
-        <Grid item xs={6} />
-        <Grid item xs={2}>
+        {type === "Empresas" || type === "Pessoas" ? (
+          <Grid item xs={12}>
+            <TextField
+              label="Nome"
+              value={item.nome}
+              onChange={(e) => {
+                setItem({ ...item, nome: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Empresas" ? (
+          <Grid item xs={12}>
+            <TextField
+              label="Morada"
+              value={item.morada}
+              onChange={(e) => {
+                setItem({ ...item, morada: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Pessoas" ? (
+          <Grid item xs={12}>
+            <TextField
+              label="Idade"
+              value={item.idade}
+              onChange={(e) => {
+                setItem({ ...item, idade: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Pessoas" ? (
+          <Grid item xs={12}>
+            <TextField
+              label="Email"
+              value={item.email}
+              onChange={(e) => {
+                setItem({ ...item, email: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Empresas" || type === "Pessoas" ? (
+          <Grid item xs={12}>
+            <TextField
+              label="Imagem"
+              value={item.imagem}
+              onChange={(e) => {
+                setItem({ ...item, imagem: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Salarios" ? (
+          <Grid item xs={12}>
+            <TextField
+              label="Quantidade"
+              value={item.quantidade}
+              onChange={(e) => {
+                setItem({ ...item, quantidade: e.target.value });
+              }}
+              style={{ backgroundColor: "white" }}
+              type="text"
+              required
+            />
+          </Grid>
+        ) : (
+          ""
+        )}
+        {type === "Salarios" ? (
+          <Grid item xs={12}>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <DatePicker
+                label="Data"
+                value={item.data}
+                onChange={(newValue) => {
+                  setItem({ ...item, data: newValue });
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              />
+            </LocalizationProvider>
+          </Grid>
+        ) : (
+          ""
+        )}
+        <Grid item xs={8}>
           <Button
             type="button"
             size="small"
@@ -189,10 +333,11 @@ export default function Viewer({ type }) {
             <input type="Submit" hidden></input>
           </Button>
         </Grid>
-        <Grid item xs={3}>
+        <Grid item xs={4}>
           <Button
             variant="contained"
             onClick={() => {
+              setData(null);
               navigate(-1);
             }}
             size="small"
@@ -202,6 +347,6 @@ export default function Viewer({ type }) {
           </Button>
         </Grid>
       </Grid>
-    </>
+    </div>
   );
 }
