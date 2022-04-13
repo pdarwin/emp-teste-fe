@@ -1,17 +1,20 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
-import { DataGrid } from "@mui/x-data-grid";
-import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {
+  Button,
+  Grid,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useParams } from "react-router-dom";
+import { useState } from "react";
 import { blue } from "@mui/material/colors";
 import { actions } from "./ModalReducer";
 import { useCustomContext } from "./CustomContext";
 import { DatePicker, LocalizationProvider } from "@mui/lab";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
+import config from "../Config.json";
 
-const API_URL = "http://localhost:8080";
-
-export default function Viewer({ type }) {
-  const [data, setData] = useState(null);
+export default function MyForm({ type, data, setData }) {
   const [item, setItem] = useState({
     nome: "",
     morada: "",
@@ -23,31 +26,7 @@ export default function Viewer({ type }) {
   });
   const { modalState, modalDispatch } = useCustomContext();
 
-  useEffect(() => {
-    console.log("tudo", data);
-    setData(null);
-    getData();
-  }, []);
-
-  useEffect(() => {
-    console.log("data", data);
-    if (data === null) {
-      getData();
-    }
-  }, [data]);
-
-  const navigate = useNavigate();
-
   const params = useParams();
-
-  let getType;
-  if (type === "Empresas") {
-    getType = "Empresas";
-  } else if (type === "Pessoas") {
-    getType = "PessoasByEmpresa/" + params.id;
-  } else if (type === "Salarios") {
-    getType = "SalariosByPessoa/" + params.id;
-  }
 
   let postType;
   if (type === "Empresas") {
@@ -58,54 +37,9 @@ export default function Viewer({ type }) {
     postType = "Salario/" + params.id;
   }
 
-  let columns;
-  if (type === "Empresas") {
-    columns = [
-      { field: "nome", headerName: "Nome", width: 250 },
-      { field: "morada", headerName: "Morada", width: 650 },
-      { field: "imagem", headerName: "Imagem", width: 650 },
-    ];
-  } else if (type === "Pessoas") {
-    columns = [
-      { field: "nome", headerName: "Nome", width: 250 },
-      { field: "idade", headerName: "Idade", width: 650 },
-      { field: "email", headerName: "Email", width: 650 },
-      { field: "imagem", headerName: "Imagem", width: 650 },
-    ];
-  } else if (type === "Salarios") {
-    columns = [
-      { field: "quantidade", headerName: "Quantidade", width: 250 },
-      { field: "data", headerName: "Data", width: 650 },
-    ];
-  }
-
-  function getData() {
-    console.log(getType);
-    fetch(API_URL + "/get" + getType, {
-      headers: { "Content-type": "application/json" },
-    })
-      .then((response) => {
-        console.log(response);
-        // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
-        if (response.status !== 200) {
-          throw new Error("Erro:" + response.status);
-        }
-
-        console.log(response);
-        return response.json();
-      })
-      .then((parsedResponse) => {
-        console.log(parsedResponse);
-        setData(parsedResponse);
-      })
-      .catch((error) => {
-        alert(error);
-      });
-  }
-
   function gravar() {
     //if (valida()) {
-    fetch(API_URL + "/add" + postType, {
+    fetch(config.API_URL + "/add" + postType, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -174,31 +108,6 @@ export default function Viewer({ type }) {
  */
   return (
     <div>
-      <Typography variant="h5" my={3} align="center">
-        {"Gestão de " + type}
-      </Typography>
-      <div style={{ height: 400, width: "100%" }}>
-        {data !== null ? (
-          <DataGrid
-            rows={data}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            onCellClick={(params) => {
-              if (type === "Empresas") {
-                setData(null);
-                navigate("/pessoasporempresa/" + params.row.id);
-              }
-              if (type === "Pessoas") {
-                setData(null);
-                navigate("/salariosporpessoa/" + params.row.id);
-              }
-            }}
-          />
-        ) : (
-          ""
-        )}
-      </div>
       <Grid
         container
         rowSpacing={1}
@@ -249,8 +158,8 @@ export default function Viewer({ type }) {
                 setItem({ ...item, idade: e.target.value });
               }}
               style={{ backgroundColor: "white" }}
-              type="text"
-              required
+              type="number"
+              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
           </Grid>
         ) : (
@@ -291,14 +200,21 @@ export default function Viewer({ type }) {
         {type === "Salarios" ? (
           <Grid item xs={12}>
             <TextField
-              label="Quantidade"
+              id="filled-adornment-amount"
               value={item.quantidade}
               onChange={(e) => {
                 setItem({ ...item, quantidade: e.target.value });
               }}
+              InputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                startAdornment: (
+                  <InputAdornment position="start">€</InputAdornment>
+                ),
+              }}
               style={{ backgroundColor: "white" }}
-              type="text"
-              required
+              type="number"
+              label="Quantidade"
             />
           </Grid>
         ) : (
@@ -331,19 +247,6 @@ export default function Viewer({ type }) {
           >
             Gravar
             <input type="Submit" hidden></input>
-          </Button>
-        </Grid>
-        <Grid item xs={4}>
-          <Button
-            variant="contained"
-            onClick={() => {
-              setData(null);
-              navigate(-1);
-            }}
-            size="small"
-            style={{ float: "right" }}
-          >
-            Voltar
           </Button>
         </Grid>
       </Grid>

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "./Componentes/NavBar";
 import MyModal from "./Componentes/MyModal";
-import Viewer from "./Componentes/Viewer";
+import MyViewer from "./Componentes/MyViewer";
 import { useReducer } from "react";
 import { initialState, ModalReducer } from "./Componentes/ModalReducer";
 import CustomContext from "./Componentes/CustomContext";
@@ -27,14 +27,14 @@ function App() {
           <MyModal />
           <NavBar />
           <Routes>
-            <Route path="/" element={<Viewer type={types.empresas} />} />
+            <Route path="/" element={<MyViewer type={types.empresas} />} />
             <Route
               path="/pessoasporempresa/:id"
-              element={<Viewer type={types.pessoas} />}
+              element={<MyViewer type={types.pessoas} />}
             />
             <Route
               path="/salariosporpessoa/:id"
-              element={<Viewer type={types.salarios} />}
+              element={<MyViewer type={types.salarios} />}
             />
           </Routes>
         </BrowserRouter>
