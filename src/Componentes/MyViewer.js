@@ -129,8 +129,8 @@ export default function MyViewer({ type }) {
       >
         Voltar
       </Button>
-      <MyDeleteForm type={type} getData={getData} />
       <MyForm type={type} getData={getData} />
+      <MyDeleteForm type={type} getData={getData} />
     </div>
   );
 }

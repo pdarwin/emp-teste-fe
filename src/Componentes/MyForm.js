@@ -49,15 +49,16 @@ export default function MyForm({ type, getData }) {
       .then((response) => {
         // Validar se o pedido foi feito com sucesso. Pedidos são feitos com sucesso normalmente quando o status é entre 200 e 299
         console.log(response);
-        if (response.status !== 200) {
-          throw new Error(response.status.toString);
-        }
+        // if (response.status !== 200) {
+        //   throw new Error(response.status.toString);
+        // }
 
         return response.json();
       })
       .then((parsedResponse) => {
+        console.log(parsedResponse);
         if (parsedResponse.statusOk) {
-          item.id = parsedResponse.newID;
+          //item.id = parsedResponse.newID;
           getData();
           setItem({
             ...item,
